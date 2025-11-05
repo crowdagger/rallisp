@@ -22,10 +22,14 @@
   #:use-module (hoot ffi)
   #:export (current-document
             document-body
+            log
             get-element-by-id
             make-text-node
             make-element))
 
+(define-foreign log
+  "document" "log"
+  (ref string) -> (ref null extern))
 (define-foreign current-document
   "document" "get"
   -> (ref extern))

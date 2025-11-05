@@ -28,7 +28,13 @@
              (math)
              (math rect)
              (math vector)
-             (srfi srfi-9))
+             (srfi srfi-9)
+             (rallisp object))
+
+(log "foo\n")
+
+(define obj (make-object 3 2 3 2 3))
+
 
 ;; Data types
 (define-record-type <brick-type>
@@ -281,7 +287,7 @@
           (x (rect-x hitbox))
           (y (rect-y hitbox)))
       (set-transform! context 1.0 0 0 1.0 (+ x (* .5 w)) (+ y (* .5 h)))
-      (rotate! context 1.6)
+      (rotate! context .8)
       
       (draw-image context image:paddle
                   0.0 0.0 w h

@@ -21,7 +21,7 @@
 
 (define-module (math circle)
   #:use-module (math)
-  #:use-module (math vec2)
+  #:use-module (math vector)
   #:use-module (srfi srfi-9)
   #:export (<circle>
             make-circle
@@ -40,5 +40,5 @@
 (define (circles-collision? c1 c2)
   (let* ([dist (vec2-sub (circle-pos c1) (circle-pos c2))]
          [dist (vec2-magnitude dist)]
-         [r-sum (+ (circle-radius c1) (circle-radius-c2))])
+         [r-sum (+ (circle-radius c1) (circle-radius c2))])
     (<= dist r-sum)))

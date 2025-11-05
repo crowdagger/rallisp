@@ -17,6 +17,7 @@
 (define-module (rallisp object)
   #:use-module (srfi srfi-9)
   #:use-module (math circle)
+  #:use-module (math vector)
   #:use-module (hoot errors)
   #:export (<object>
             object?
@@ -43,4 +44,4 @@
   (%make-object (make-circle pos radius) speed rotation image))
 
 (define (object-pos o)
-  (circle-pos (object-circle o)))
+  (circle-pos (object-hitbox o)))

@@ -10,11 +10,12 @@ window.addEventListener("load", async () => {
           setTimeout: (f, delay) => window.setTimeout(f, delay)
         },
         document: {
-          get: () => document,
-          body: () => document.body,
-          getElementById: (id) => document.getElementById(id),
-          createTextNode: (text) => document.createTextNode(text),
-          createElement: (tag) => document.createElement(tag)
+            log: (msg) => console.log(msg),
+            get: () => document,
+            body: () => document.body,
+            getElementById: (id) => document.getElementById(id),
+            createTextNode: (text) => document.createTextNode(text),
+            createElement: (tag) => document.createElement(tag)
         },
         element: {
           value: (elem) => elem.value,
