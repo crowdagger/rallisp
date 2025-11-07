@@ -49,8 +49,6 @@
 
 
 (define (make-object pos radius speed rotation image)
-  (unless (vec2? pos) (make-assertion-error "Not a vec2" pos))
-  (unless (vec2? speed) (make-assertion-error "Not a vec2" speed))
   (%make-object (make-circle pos radius) speed rotation image))
 
 (define (set-object-pos! o pos)

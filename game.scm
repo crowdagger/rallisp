@@ -29,11 +29,14 @@
              (math rect)
              (math vector)
              (srfi srfi-9)
-             (rallisp object))
+             (rallisp object)
+             (rallisp car))
 
 (define *state* 'running)
 
 (define obj (make-object (vec2 100 100) 16.0 (vec2 10 0) 0 (make-image "assets/images/car.png")))
+(define car (make-car obj))
+(set-car-acceleration! car (vec2 0 1))
 (log (format #f "foo: ~a\n" (object-x obj)))
 
 ;; Game data
@@ -47,7 +50,7 @@
   (match *state*
     ('running
      (set! *current-turn* (+ dt *current-turn*))
-     (object-update! obj (* .001 dt))
+     (car-update! car (* .001 dt))
      (set-object-rotation! obj (+ (object-rotation obj) 0.01))
      (when (> *current-turn* game-turn)
          (set! *current-turn* 0)
@@ -85,7 +88,7 @@
 
          
     
-  (object-draw obj context)
+  (car-draw car context)
     
   ;; Print score
   (set-fill-color! context "#ffffff")
