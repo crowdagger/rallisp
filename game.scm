@@ -30,14 +30,9 @@
              (math vector)
              (srfi srfi-9)
              (rallisp object)
+             (rallisp game)
              (rallisp car))
 
-(define *state* 'running)
-
-(define obj (make-object (vec2 100 100) 16.0 (vec2 10 0) 0 (make-image "assets/images/car.png")))
-(define car (make-car obj))
-(set-car-acceleration! car (vec2 0 1))
-(log (format #f "foo: ~a\n" (object-x obj)))
 
 ;; Game data
 (define game-width    640.0)
@@ -45,16 +40,28 @@
 (define game-turn 1000.0)
 (define *current-turn* 0.0)
 
+(define *game* (make-game))
+
+
+(define obj (make-object (vec2 100 100) 16.0 (vec2 10 0) 0 (make-image "assets/images/car.png")))
+(define car (make-car obj))
+(register-object! *game* obj)
+(register-car! *game* car)
+(set-car-acceleration! car (vec2 0 1))
+(log (format #f "foo: ~a\n" (object-x obj)))
+
+
+
 (define dt (/ 1000.0 60.0)) ; aim for updating at 60Hz
 (define (update)
-  (match *state*
+  (match (game-state *game*)
     ('running
      (set! *current-turn* (+ dt *current-turn*))
-     (car-update! car (* .001 dt))
-     (set-object-rotation! obj (+ (object-rotation obj) 0.01))
+     (game-update! *game* (* .001 dt))
+;     (set-object-rotation! obj (+ (object-rotation obj) 0.01))
      (when (> *current-turn* game-turn)
          (set! *current-turn* 0)
-         (set! *state* 'prompt))
+         (set-game-state! *game* 'prompt))
      )
     (_ #t))
   (timeout update-callback dt))
@@ -76,7 +83,7 @@
   (set-fill-color! context "#006600")
   (fill-rect context 0.0 0.0 game-width game-height)
 
-  (when (eq? *state* 'prompt)
+  (when (eq? (game-state *game*) 'prompt)
     (let* ([speed (object-speed obj)]
            [speed (vec2-mul-scalar speed 10)]
            [x (object-center-x obj)]
@@ -88,7 +95,7 @@
 
          
     
-  (car-draw car context)
+  (game-draw *game* context)
     
   ;; Print score
   (set-fill-color! context "#ffffff")
@@ -122,12 +129,12 @@
          [x (- (mouse-x event) offset-x)]
          [y (- (mouse-y event) offset-y)])
     (log (format #f "~a ~a\n" x y)))
-  (match *state*
+  (match (game-state *game*)
     ('running
      #f)
     ('prompt
      (set! *current-turn* 0.0)
-     (set! *state* 'running))
+     (set-game-state! *game* 'running))
     (_ #f)))
 
 

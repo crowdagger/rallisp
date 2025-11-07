@@ -22,8 +22,7 @@
             car-object
             car-acceleration
             set-car-acceleration!
-            car-update!
-            car-draw))
+            car-update!))
 
 (define-record-type <car>
   (%make-car object acceleration)
@@ -35,12 +34,8 @@
   (let ([acceleration (vec2 0 0)])
     (%make-car object acceleration)))
 
-(define (car-draw c context)
-  (object-draw (car-object c) context))
-
 (define (car-update! c dt)
   (let* ([o (car-object c)]
          [acceleration (vec2-mul-scalar (car-acceleration c) dt)]
          [speed (object-speed o)])
-    (set-object-speed! o (vec2-add speed acceleration))
-    (object-update! o dt)))
+    (set-object-speed! o (vec2-add speed acceleration))))
