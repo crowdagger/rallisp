@@ -80,6 +80,7 @@
                   (- r) (- r) d d)
       (set-transform! context 1 0 0 1 0 0)))
 
-(define (object-update! o)
+(define (object-update! o dt)
   "Update object physically"
-  (set-object-pos! o (vec2-add (object-pos o) (object-speed o))))
+  (set-object-pos! o (vec2-add (object-pos o)
+                               (vec2-mul-scalar (object-speed o) dt))))
