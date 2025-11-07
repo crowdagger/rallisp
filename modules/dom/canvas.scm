@@ -31,7 +31,8 @@
             draw-image
             set-scale!
             set-transform!
-            set-image-smoothing-enabled!))
+            set-image-smoothing-enabled!
+            draw-line))
 
 ;; HTMLCanvasElement
 (define-foreign get-context
@@ -72,3 +73,6 @@
 (define-foreign set-image-smoothing-enabled!
   "canvas" "setImageSmoothingEnabled"
   (ref extern) i32 -> none)
+(define-foreign draw-line
+  "canvas" "drawLine"
+  (ref extern) f64 (ref string) f64 f64 f64 f64 -> none)

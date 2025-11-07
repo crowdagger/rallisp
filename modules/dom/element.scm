@@ -29,7 +29,9 @@
             replace-with!
             set-attribute!
             remove-attribute!
-            clone-element))
+            clone-element
+            bounding-client-x
+            bounding-client-y))
 
 (define-foreign element-value
   "element" "value"
@@ -67,3 +69,9 @@
 (define-foreign clone-element
   "element" "clone"
   (ref extern) -> (ref extern))
+(define-foreign bounding-client-x
+  "element" "boundingClientX"
+  (ref extern) -> i32)
+(define-foreign bounding-client-y
+  "element" "boundingClientY"
+  (ref extern) -> i32)

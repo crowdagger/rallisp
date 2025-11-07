@@ -23,7 +23,10 @@
   #:export (add-event-listener!
             remove-event-listener!
             prevent-default!
-            keyboard-event-code))
+            keyboard-event-code
+            mouse-button
+            mouse-x
+            mouse-y))
 
 ;; EventTarget
 (define-foreign add-event-listener!
@@ -42,3 +45,15 @@
 (define-foreign keyboard-event-code
   "event" "keyboardCode"
   (ref extern) -> (ref string))
+
+(define-foreign mouse-button
+  "event" "mouseButton"
+  (ref extern) -> i32)
+
+(define-foreign mouse-x
+  "event" "mouseX"
+  (ref extern) -> i32)
+
+(define-foreign mouse-y
+  "event" "mouseY"
+  (ref extern) -> i32)

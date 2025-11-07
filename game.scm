@@ -31,7 +31,7 @@
              (srfi srfi-9)
              (rallisp object))
 
-(define obj (make-object (vec2 100 100) 16.0 (vec2 1 0) 0 (make-image "assets/images/car.png")))
+(define obj (make-object (vec2 100 100) 16.0 (vec2 0 0) 0 (make-image "assets/images/car.png")))
 (log (format #f "foo: ~a\n" (object-x obj)))
 
 ;; Data types
@@ -268,6 +268,9 @@
     ;; Draw background
     (set-fill-color! context "#140c1c")
     (fill-rect context 0.0 0.0 game-width game-height)
+
+    (draw-line context 3 "green" (object-x obj) (object-y obj) pos-x pos-y)
+    
     ;; Draw bricks
     (do ((i 0 (+ i 1)))
         ((= i (vector-length bricks)))
@@ -327,6 +330,27 @@
 (define key:right "ArrowRight")
 (define key:confirm "Enter")
 
+(define pos-x 0)
+(define pos-y 0)
+
+(define (on-move event)
+  (let* ([offset-x (bounding-client-x canvas)]
+         [offset-y (bounding-client-y canvas)]
+         [x (- (mouse-x event) offset-x)]
+         [y (- (mouse-y event) offset-y)])
+    (set! pos-x x)
+    (set! pos-y y)))
+  
+(define (on-click event)
+  (log (format #f "~a ~a, ~a\n" (mouse-button event) (mouse-x event) (mouse-y event)))
+  (log (format #f "~a, ~a\n" (bounding-client-x canvas) (bounding-client-y canvas)))
+  (let* ([offset-x (bounding-client-x canvas)]
+         [offset-y (bounding-client-y canvas)]
+         [x (- (mouse-x event) offset-x)]
+         [y (- (mouse-y event) offset-y)])
+    (log (format #f "~a ~a\n" x y))))
+
+
 (define (on-key-down event)
   (let ((key (keyboard-event-code event)))
     (match (level-state *level*)
@@ -358,11 +382,14 @@
 ;; Canvas and event loop setup
 (define canvas (get-element-by-id "canvas"))
 (define context (get-context canvas "2d"))
+
 (set-element-width! canvas (inexact->exact game-width))
 (set-element-height! canvas (inexact->exact game-height))
 (add-event-listener! (current-document) "keydown"
                      (procedure->external on-key-down))
 (add-event-listener! (current-document) "keyup"
                      (procedure->external on-key-up))
+(add-event-listener! canvas "click" (procedure->external on-click))
+(add-event-listener! canvas "mousemove" (procedure->external on-move))
 (request-animation-frame draw-callback)
 (timeout update-callback dt)

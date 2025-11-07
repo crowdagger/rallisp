@@ -18,24 +18,29 @@ window.addEventListener("load", async () => {
             createElement: (tag) => document.createElement(tag)
         },
         element: {
-          value: (elem) => elem.value,
-          setValue: (elem, value) => elem.value = value,
-          width: (elem) => elem.width,
-          height: (elem) => elem.height,
-          setWidth: (elem, width) => elem.width = width,
-          setHeight: (elem, height) => elem.height = height,
-          appendChild: (parent, child) => parent.appendChild(child),
-          setAttribute: (elem, name, value) => elem.setAttribute(name, value),
-          removeAttribute: (elem, name) => elem.removeAttribute(name),
-          remove: (elem) => elem.remove(),
-          replaceWith: (oldElem, newElem) => oldElem.replaceWith(newElem),
-          clone: (elem) => elem.cloneNode()
+            value: (elem) => elem.value,
+            boundingClientX: (elem) => elem.getBoundingClientRect().x,
+            boundingClientY: (elem) => elem.getBoundingClientRect().y,
+            setValue: (elem, value) => elem.value = value,
+            width: (elem) => elem.width,
+            height: (elem) => elem.height,
+            setWidth: (elem, width) => elem.width = width,
+            setHeight: (elem, height) => elem.height = height,
+            appendChild: (parent, child) => parent.appendChild(child),
+            setAttribute: (elem, name, value) => elem.setAttribute(name, value),
+            removeAttribute: (elem, name) => elem.removeAttribute(name),
+            remove: (elem) => elem.remove(),
+            replaceWith: (oldElem, newElem) => oldElem.replaceWith(newElem),
+            clone: (elem) => elem.cloneNode()
         },
         event: {
-          addEventListener: (target, type, listener) => target.addEventListener(type, listener),
-          removeEventListener: (target, type, listener) => target.removeEventListener(type, listener),
-          preventDefault: (event) => event.preventDefault(),
-          keyboardCode: (event) => event.code
+            addEventListener: (target, type, listener) => target.addEventListener(type, listener),
+            removeEventListener: (target, type, listener) => target.removeEventListener(type, listener),
+            preventDefault: (event) => event.preventDefault(),
+            keyboardCode: (event) => event.code,
+            mouseButton: (event) => event.button,
+            mouseX: (event) => event.clientX,
+            mouseY: (event) => event.clientY
         },
         image: {
           new: (src) => {
@@ -62,6 +67,13 @@ window.addEventListener("load", async () => {
             setFont: (ctx, font) => ctx.font = font,
             setTextAlign: (ctx, align) => ctx.textAlign = align,
             clearRect: (ctx, x, y, w, h) => ctx.clearRect(x, y, w, h),
+            drawLine: (ctx, width, style, x1, y1, x2, y2) => {
+                ctx.lineWidth = width;
+                ctx.strokeStyle = style;
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }, 
             fillRect: (ctx, x, y, w, h) => ctx.fillRect(x, y, w, h),
             fillText: (ctx, text, x, y) => ctx.fillText(text, x, y),
             drawImage: (ctx, image, sx, sy, sw, sh, dx, dy, dw, dh) => ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh),
