@@ -46,9 +46,20 @@
 (define obj (make-object (vec2 100 100) 16.0 (vec2 10 0) 0 (make-image "assets/images/car.png")))
 (define car (make-car obj))
 (register-object! *game* obj)
+
+(let lp ([n 20])
+  (when (> n 0)
+    (let* ([x (* (random) game-width)]
+           [y (* (random) game-height)]
+           [spd-x (- 15 (* (random) 30))]
+           [spd-y (- 15 (* (random) 30))]
+           [particle (make-object (vec2 x y) 4.0 (vec2 spd-x spd-y) 0 (make-image "assets/images/smoke.png"))])
+      (register-object! *game* particle)
+      (lp (- n 1)))))
+          
+
 (register-car! *game* car)
 (set-car-acceleration! car (vec2 0 1))
-(log (format #f "foo: ~a\n" (object-x obj)))
 
 
 
@@ -58,11 +69,11 @@
     ('running
      (set! *current-turn* (+ dt *current-turn*))
      (game-update! *game* (* .001 dt))
+     (log (format #f "collision?: ~a\n" (length (game-collisions *game*))))
 ;     (set-object-rotation! obj (+ (object-rotation obj) 0.01))
      (when (> *current-turn* game-turn)
          (set! *current-turn* 0)
-         (set-game-state! *game* 'prompt))
-     )
+         (set-game-state! *game* 'prompt)))
     (_ #t))
   (timeout update-callback dt))
 (define update-callback (procedure->external update))
@@ -122,20 +133,17 @@
     (set! pos-y y)))
   
 (define (on-click event)
-  (log (format #f "~a ~a, ~a\n" (mouse-button event) (mouse-x event) (mouse-y event)))
-  (log (format #f "~a, ~a\n" (bounding-client-x canvas) (bounding-client-y canvas)))
   (let* ([offset-x (bounding-client-x canvas)]
          [offset-y (bounding-client-y canvas)]
          [x (- (mouse-x event) offset-x)]
          [y (- (mouse-y event) offset-y)])
-    (log (format #f "~a ~a\n" x y)))
   (match (game-state *game*)
     ('running
      #f)
     ('prompt
      (set! *current-turn* 0.0)
      (set-game-state! *game* 'running))
-    (_ #f)))
+    (_ #f))))
 
 
 (define (on-key-down event)

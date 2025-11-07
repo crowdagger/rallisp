@@ -23,6 +23,7 @@
   #:use-module (math)
   #:use-module (math vector)
   #:use-module (srfi srfi-9)
+  #:use-module (dom document)
   #:export (<circle>
             make-circle
             circle-pos
@@ -43,4 +44,4 @@
   (let* ([dist (vec2-sub (circle-pos c1) (circle-pos c2))]
          [dist (vec2-magnitude dist)]
          [r-sum (+ (circle-radius c1) (circle-radius c2))])
-    (<= dist r-sum)))
+    (< dist r-sum)))

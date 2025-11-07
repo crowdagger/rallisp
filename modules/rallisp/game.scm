@@ -16,6 +16,7 @@
   #:use-module (srfi srfi-9)
   #:use-module (rallisp object)
   #:use-module (rallisp car)
+  #:use-module (dom document)
   #:export (<game>
             make-game
             game?
@@ -24,6 +25,8 @@
             register-object!
             register-car!
             game-draw
+            game-collides?
+            game-collisions
             game-update!))
 
 (define-record-type <game>
@@ -32,6 +35,9 @@
   (state game-state set-game-state!)
   (objects game-objects set-game-objects!)
   (cars game-cars set-game-cars!))
+
+(define (nil? x)
+  (eq? x '()))
 
 (define (make-game)
   (%make-game 'prompt '() '()))
@@ -59,3 +65,25 @@
     (unless (eq? '() objects)
       (object-update! (car objects) dt)
       (lp (cdr objects)))))
+
+(define (game-collides? game object)
+  "Return #f if the object collides with other objects. Not optimized at all, horrible"
+  (let lp ([objects (game-objects game)])
+    (if (nil? objects)
+        #f
+        (if (object-collides? object (car objects))
+            #t
+            (lp (cdr objects))))))
+
+(define (game-collisions game)
+  (let lp ([objects (game-objects game)]
+           [collisions '()])
+    (if (nil? objects)
+        collisions
+        (let ([o (car objects)]
+              [rest (cdr objects)])
+          (if (game-collides? game o)
+              (lp rest
+                (cons o collisions))
+              (lp rest collisions))))))
+          

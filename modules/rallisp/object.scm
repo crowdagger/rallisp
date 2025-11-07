@@ -37,6 +37,7 @@
             object-speed
             object-draw
             object-update!
+            object-collides?
             make-object))
 
 (define-record-type <object>
@@ -92,5 +93,12 @@
 
 (define (object-update! o dt)
   "Update object physically"
+  ; Add speed to pos
   (set-object-pos! o (vec2-add (object-pos o)
                                (vec2-mul-scalar (object-speed o) dt))))
+
+
+(define (object-collides? o other)
+  (if (eq? o other)
+      #f
+      (circles-collision? (object-hitbox o) (object-hitbox other))))
