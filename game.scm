@@ -31,7 +31,7 @@
              (srfi srfi-9)
              (rallisp object))
 
-(define obj (make-object (vec2 3 2) 3 (vec2 0 0) 0 3))
+(define obj (make-object (vec2 100 100) 11.0 (vec2 0 0) 0 (make-image "assets/images/ball.png")))
 (log (format #f "foo: ~a\n" (object-x obj)))
 
 ;; Data types
@@ -277,7 +277,11 @@
                       0.0 0.0
                       brick-width brick-height
                       (rect-x hitbox) (rect-y hitbox)
+
                       brick-width brick-height))))
+
+    (object-draw obj context)
+    
     ;; Draw paddle
     (let* ((w 104.0)
           (h 24.0)

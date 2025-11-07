@@ -19,16 +19,19 @@
   #:use-module (math circle)
   #:use-module (math vector)
   #:use-module (hoot errors)
+  #:use-module (dom canvas)
   #:export (<object>
             object?
             object-hitbox
             object-pos
             object-x
             object-y
+            object-radius
             object-rotation
             set-object-rotation!
             set-object-speed!
             object-image
+            object-draw
             make-object))
 
 (define-record-type <object>
@@ -48,8 +51,26 @@
 (define (object-pos o)
   (circle-pos (object-hitbox o)))
 
+(define (object-radius o)
+  (circle-radius (object-hitbox o)))
+
 (define (object-x o)
   (vec2-x (object-pos o)))
 
 (define (object-y o)
   (vec2-y (object-pos o)))
+
+(define (object-draw o context)
+  "Draw object o on context"
+  (let* ([r (object-radius o)]
+         [d (* 2 r)]
+         [rot (object-rotation o)]
+         [x (object-x o)]
+         [y (object-y o)])
+      (set-transform! context 1.0 0 0 1.0 (+ x r) (+ y r))
+      (rotate! context rot)
+      
+      (draw-image context (object-image o)
+                  0.0 0.0 d d 
+                  (- r) (- r) d d)
+      (set-transform! context 1 0 0 1 0 0)))
