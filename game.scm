@@ -193,60 +193,10 @@
 
 (define dt (/ 1000.0 60.0)) ; aim for updating at 60Hz
 (define (update)
-  (match (level-state *level*)
+  (match 'play
     ('play
      (object-update! obj)
-     (set-object-rotation! obj (+ (object-rotation obj) 0.01))
-     (let* ((bricks (level-bricks *level*))
-            (ball (level-ball *level*))
-            (b-velocity (ball-velocity ball))
-            (b-hitbox (ball-hitbox ball))
-            (paddle (level-paddle *level*))
-            (p-velocity (paddle-velocity paddle))
-            (p-hitbox (paddle-hitbox paddle))
-            (score (level-score *level*)))
-       ;; Move ball and paddle
-       (set-rect-x! b-hitbox (+ (rect-x b-hitbox) (vec2-x b-velocity)))
-       (set-rect-y! b-hitbox (+ (rect-y b-hitbox) (vec2-y b-velocity)))
-       ;; We only move the paddle along the x-axis.
-       (set-rect-x! p-hitbox
-                    (clamp (+ (rect-x p-hitbox) (vec2-x p-velocity))
-                           0.0
-                           (- game-width paddle-width)))
-       ;; Collide ball against walls, bricks, and paddle.
-       (cond
-        ((< (rect-x b-hitbox) 0.0)      ; left wall
-         (set-rect-x! b-hitbox 0.0)
-         (reflect-ball! ball #t #f))
-        ((> (+ (rect-x b-hitbox) (rect-width b-hitbox)) game-width) ; right wall
-         (set-rect-x! b-hitbox (- game-width (rect-width b-hitbox)))
-         (reflect-ball! ball #t #f))
-        ((< (rect-y b-hitbox) 0.0)      ; top wall
-         (set-rect-y! b-hitbox 0.0)
-         (reflect-ball! ball #f #t))
-        ((> (+ (rect-y b-hitbox) (rect-height b-hitbox)) game-height) ; bottom wall
-         (lose! *level*))
-        ((collide-ball! ball (paddle-hitbox paddle))
-         (media-play audio:paddle)
-         (speed-up-ball! ball))
-        (else
-         (let loop ((i 0) (hit? #f))
-           (if (< i (vector-length bricks))
-               (let ((brick (vector-ref bricks i)))
-                 (if (and (not (brick-broken? brick))
-                          (collide-ball! ball (brick-hitbox brick)))
-                     (begin
-                       (media-play audio:brick)
-                       (speed-up-ball! ball)
-                       (set-brick-broken! brick #t)
-                       (set-level-score! *level*
-                                         (+ (level-score *level*)
-                                            (brick-type-points (brick-type brick))))
-                       (loop (+ i 1) #t))
-                     (loop (+ i 1) hit?)))
-               ;; Maybe change to win state if all bricks are broken.
-               (when (and hit? (level-clear? *level*))
-                 (win! *level*))))))))
+     (set-object-rotation! obj (+ (object-rotation obj) 0.01)))
     (_ #t))
   (timeout update-callback dt))
 (define update-callback (procedure->external update))
@@ -261,67 +211,21 @@
             str)))))
 
 (define (draw prev-time)
-  (let ((bricks (level-bricks *level*))
-        (ball (level-ball *level*))
-        (paddle (level-paddle *level*))
-        (score (level-score *level*)))
-    ;; Draw background
-    (set-fill-color! context "#140c1c")
-    (fill-rect context 0.0 0.0 game-width game-height)
+  ;; Clear canvas
+  (clear-rect context 0.0 0.0 game-width game-height)
+  ;; Draw background
+  (set-fill-color! context "#006600")
+  (fill-rect context 0.0 0.0 game-width game-height)
 
-    (draw-line context 3 "green" (object-x obj) (object-y obj) pos-x pos-y)
+  (draw-line context 3 "red" (object-x obj) (object-y obj) pos-x pos-y)
     
-    ;; Draw bricks
-    (do ((i 0 (+ i 1)))
-        ((= i (vector-length bricks)))
-      (let* ((brick (vector-ref bricks i))
-             (type (brick-type brick))
-             (hitbox (brick-hitbox brick)))
-        (unless (brick-broken? brick)
-          (draw-image context (brick-type-image type)
-                      0.0 0.0
-                      brick-width brick-height
-                      (rect-x hitbox) (rect-y hitbox)
-
-                      brick-width brick-height))))
-
-    (object-draw obj context)
+  (object-draw obj context)
     
-    ;; Draw paddle
-    (let* ((w 104.0)
-          (h 24.0)
-          (hitbox (paddle-hitbox paddle))
-          (x (rect-x hitbox))
-          (y (rect-y hitbox)))
-      (set-transform! context 1.0 0 0 1.0 (+ x (* .5 w)) (+ y (* .5 h)))
-      (rotate! context .8)
-      
-      (draw-image context image:paddle
-                  0.0 0.0 w h
-                  (- (* .5 w)) (- (* .5 h)) w h)
-      (set-transform! context 1 0 0 1 0 0))
-    
-    ;; Draw ball
-    (let ((w 22.0)
-          (h 22.0)
-          (hitbox (ball-hitbox ball)))
-      (draw-image context image:ball
-                  0.0 0.0 w h
-                  (rect-x hitbox) (rect-y hitbox) w h))
-    ;; Print score
-    (set-fill-color! context "#ffffff")
-    (set-font! context "bold 24px monospace")
-    (set-text-align! context "left")
-    (fill-text context "PLOP:" 16.0 36.0)
-    (fill-text context (number->string* score) 108.0 36.0)
-    (match (level-state *level*)
-      ('win
-       (set-text-align! context "center")
-       (fill-text context "YAY YOU DID IT!!!" (/ game-width 2.0) (/ game-height 2.0)))
-      ('lose
-       (set-text-align! context "center")
-       (fill-text context "OH NO, GAME OVER :(" (/ game-width 2.0) (/ game-height 2.0)))
-      (_ #t)))
+  ;; Print score
+  (set-fill-color! context "#ffffff")
+  (set-font! context "bold 24px monospace")
+  (set-text-align! context "left")
+  (fill-text context "PLOP!" 100 0)
   (request-animation-frame draw-callback))
 (define draw-callback (procedure->external draw))
 

@@ -68,6 +68,7 @@ window.addEventListener("load", async () => {
             setTextAlign: (ctx, align) => ctx.textAlign = align,
             clearRect: (ctx, x, y, w, h) => ctx.clearRect(x, y, w, h),
             drawLine: (ctx, width, style, x1, y1, x2, y2) => {
+                ctx.beginPath();
                 ctx.lineWidth = width;
                 ctx.strokeStyle = style;
                 ctx.moveTo(x1, y1);
