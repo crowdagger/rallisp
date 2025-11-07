@@ -31,10 +31,8 @@
              (srfi srfi-9)
              (rallisp object))
 
-(log "foo\n")
-
-(define obj (make-object 3 2 3 2 3))
-
+(define obj (make-object (vec2 3 2) 3 (vec2 0 0) 0 3))
+(log (format #f "foo: ~a\n" (object-x obj)))
 
 ;; Data types
 (define-record-type <brick-type>

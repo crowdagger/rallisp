@@ -23,6 +23,8 @@
             object?
             object-hitbox
             object-pos
+            object-x
+            object-y
             object-rotation
             set-object-rotation!
             set-object-speed!
@@ -45,3 +47,9 @@
 
 (define (object-pos o)
   (circle-pos (object-hitbox o)))
+
+(define (object-x o)
+  (vec2-x (object-pos o)))
+
+(define (object-y o)
+  (vec2-y (object-pos o)))
