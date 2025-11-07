@@ -77,11 +77,14 @@
          [new-x (+ x (vec2-x speed))]
          [new-y (+ y (vec2-y speed))]
          [v-spd (vec2 (- new-x x) (- new-y y))]
-         [v-est (vec2 (- pos-x x) (- pos-y y))]
+         [v-est (vec2 (- pos-x new-x) (- pos-y new-y))]
          [dot (vec2-dot v-spd v-est)]
          [wedge (vec2-wedge v-spd v-est)]
          [mag2 (* (vec2-magnitude v-spd) (vec2-magnitude v-est))]
          [angle (asin (/ wedge mag2))]
+         [angle (if (positive? dot)
+                    angle
+                    (- angle))]
          [valid? (and (< (abs angle) max-angle)
                       (< (vec2-magnitude v-est)
                          (if (positive? dot)

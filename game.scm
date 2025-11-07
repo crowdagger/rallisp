@@ -118,9 +118,9 @@
     
   ;; Print score
   (set-fill-color! context "#ffffff")
-  (set-font! context "bold 24px monospace")
+  (set-font! context "bold 12px monospace")
   (set-text-align! context "left")
-  (fill-text context (format #f "~a" *current-turn*) 300 300)
+  (fill-text context (format #f "~a km/h" (vec2-magnitude (object-speed obj))) 20 400)
   (reinit-inputs!)
   (request-animation-frame draw-callback))
 (define draw-callback (procedure->external draw))
