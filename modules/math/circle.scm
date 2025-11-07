@@ -26,7 +26,9 @@
   #:export (<circle>
             make-circle
             circle-pos
+            set-circle-pos!
             circle-radius
+            set-circle-radius!
             circles-collision?))
 
 ;; Should we use bytevectors? Probably. Whatever.

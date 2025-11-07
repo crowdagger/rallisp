@@ -31,7 +31,7 @@
              (srfi srfi-9)
              (rallisp object))
 
-(define obj (make-object (vec2 100 100) 16.0 (vec2 0 0) 0 (make-image "assets/images/car.png")))
+(define obj (make-object (vec2 100 100) 16.0 (vec2 1 0) 0 (make-image "assets/images/car.png")))
 (log (format #f "foo: ~a\n" (object-x obj)))
 
 ;; Data types
@@ -195,6 +195,7 @@
 (define (update)
   (match (level-state *level*)
     ('play
+     (object-update! obj)
      (set-object-rotation! obj (+ (object-rotation obj) 0.01))
      (let* ((bricks (level-bricks *level*))
             (ball (level-ball *level*))

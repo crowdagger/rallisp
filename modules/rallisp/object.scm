@@ -29,9 +29,11 @@
             object-radius
             object-rotation
             set-object-rotation!
+            set-object-pos!
             set-object-speed!
             object-image
             object-draw
+            object-update!
             make-object))
 
 (define-record-type <object>
@@ -47,6 +49,9 @@
   (unless (vec2? pos) (make-assertion-error "Not a vec2" pos))
   (unless (vec2? speed) (make-assertion-error "Not a vec2" speed))
   (%make-object (make-circle pos radius) speed rotation image))
+
+(define (set-object-pos! o pos)
+  (set-circle-pos! (object-hitbox o) pos))
 
 (define (object-pos o)
   (circle-pos (object-hitbox o)))
@@ -74,3 +79,7 @@
                   0.0 0.0 d d 
                   (- r) (- r) d d)
       (set-transform! context 1 0 0 1 0 0)))
+
+(define (object-update! o)
+  "Update object physically"
+  (set-object-pos! o (vec2-add (object-pos o) (object-speed o))))
