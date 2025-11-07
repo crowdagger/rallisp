@@ -22,7 +22,7 @@
   #:pure
   #:use-module (scheme base)
   #:use-module (hoot ffi)
-  #:export (random clamp))
+  #:export (random clamp pi))
 
 (define-foreign random
   "math" "random"
@@ -32,3 +32,5 @@
   (cond ((< x min) min)
         ((> x max) max)
         (else x)))
+
+(define pi 3.14159265359)

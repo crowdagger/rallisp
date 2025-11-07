@@ -38,6 +38,7 @@
             vec2-dot
             vec2-magnitude
             vec2-normalize!
+            vec2-wedge
             vec2-clamp!))
 
 ;; For speed, a vec2 is a wrapper around a bytevector so that we can
@@ -95,8 +96,14 @@
         (* (vec2-y v) x)))
 
 (define (vec2-dot v1 v2)
+  "Dot product"
   (+ (* (vec2-x v1) (vec2-x v2))
      (* (vec2-y v1) (vec2-y v2))))
+
+(define (vec2-wedge v1 v2)
+  "Wedge product, aka cross product"
+  (- (* (vec2-x v1) (vec2-y v2))
+     (* (vec2-y v1) (vec2-x v2))))
 
 (define (vec2-magnitude v)
   (sqrt (+ (* (vec2-x v) (vec2-x v)) (* (vec2-y v) (vec2-y v)))))

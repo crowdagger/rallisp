@@ -69,7 +69,7 @@
     ('running
      (set! *current-turn* (+ dt *current-turn*))
      (game-update! *game* (* .001 dt))
-     (log (format #f "collision?: ~a\n" (length (game-collisions *game*))))
+;     (log (format #f "collision?: ~a\n" (length (game-collisions *game*))))
 ;     (set-object-rotation! obj (+ (object-rotation obj) 0.01))
      (when (> *current-turn* game-turn)
          (set! *current-turn* 0)
@@ -100,8 +100,19 @@
            [x (object-center-x obj)]
            [y (object-center-y obj)]
            [new-x (+ x (vec2-x speed))]
-           [new-y (+ y (vec2-y speed))])
-      (draw-line context 3 "red" x y pos-x pos-y)
+           [new-y (+ y (vec2-y speed))]
+           [v1 (vec2 (- new-x x) (- new-y y))]
+           [v2 (vec2 (- pos-x x) (- pos-y y))]
+           [dot (vec2-dot v1 v2)]
+           [wedge (vec2-wedge v1 v2)]
+           [mag (* (vec2-magnitude v1) (vec2-magnitude v2))]
+           [angle (asin (/ wedge mag))]
+           [color (if (< (abs angle) (* .25 pi))
+                      "green"
+                      "red")])
+      (log (format #f "ang: ~a mag: ~a" (asin (/ wedge mag)) (vec2-magnitude v2)))
+
+      (draw-line context 3 color x y pos-x pos-y)
       (draw-line context 3 "blue" x y new-x new-y)))
 
          
