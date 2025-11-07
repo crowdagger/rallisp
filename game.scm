@@ -31,7 +31,7 @@
              (srfi srfi-9)
              (rallisp object))
 
-(define state 'running)
+(define *state* 'running)
 
 (define obj (make-object (vec2 100 100) 16.0 (vec2 10 0) 0 (make-image "assets/images/car.png")))
 (log (format #f "foo: ~a\n" (object-x obj)))
@@ -39,13 +39,20 @@
 ;; Game data
 (define game-width    640.0)
 (define game-height   480.0)
+(define game-turn 1000.0)
+(define *current-turn* 0.0)
 
 (define dt (/ 1000.0 60.0)) ; aim for updating at 60Hz
 (define (update)
-  (match state
+  (match *state*
     ('running
+     (set! *current-turn* (+ dt *current-turn*))
      (object-update! obj (* .001 dt))
-     (set-object-rotation! obj (+ (object-rotation obj) 0.01)))
+     (set-object-rotation! obj (+ (object-rotation obj) 0.01))
+     (when (> *current-turn* game-turn)
+         (set! *current-turn* 0)
+         (set! *state* 'prompt))
+     )
     (_ #t))
   (timeout update-callback dt))
 (define update-callback (procedure->external update))
@@ -66,7 +73,17 @@
   (set-fill-color! context "#006600")
   (fill-rect context 0.0 0.0 game-width game-height)
 
-  (draw-line context 3 "red" (object-x obj) (object-y obj) pos-x pos-y)
+  (when (eq? *state* 'prompt)
+    (let* ([speed (object-speed obj)]
+           [speed (vec2-mul-scalar speed 10)]
+           [x (object-center-x obj)]
+           [y (object-center-y obj)]
+           [new-x (+ x (vec2-x speed))]
+           [new-y (+ y (vec2-y speed))])
+      (draw-line context 3 "red" x y pos-x pos-y)
+      (draw-line context 3 "blue" x y new-x new-y)))
+
+         
     
   (object-draw obj context)
     
@@ -74,7 +91,7 @@
   (set-fill-color! context "#ffffff")
   (set-font! context "bold 24px monospace")
   (set-text-align! context "left")
-  (fill-text context "PLOP!" 100 0)
+  (fill-text context (format #f "~a" *current-turn*) 300 300)
   (request-animation-frame draw-callback))
 (define draw-callback (procedure->external draw))
 
@@ -101,7 +118,14 @@
          [offset-y (bounding-client-y canvas)]
          [x (- (mouse-x event) offset-x)]
          [y (- (mouse-y event) offset-y)])
-    (log (format #f "~a ~a\n" x y))))
+    (log (format #f "~a ~a\n" x y)))
+  (match *state*
+    ('running
+     #f)
+    ('prompt
+     (set! *current-turn* 0.0)
+     (set! *state* 'running))
+    (_ #f)))
 
 
 (define (on-key-down event)

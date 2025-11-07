@@ -26,12 +26,15 @@
             object-pos
             object-x
             object-y
+            object-center-x
+            object-center-y
             object-radius
             object-rotation
             set-object-rotation!
             set-object-pos!
             set-object-speed!
             object-image
+            object-speed
             object-draw
             object-update!
             make-object))
@@ -64,6 +67,15 @@
 
 (define (object-y o)
   (vec2-y (object-pos o)))
+
+(define (object-center-x o)
+  (+ (object-x o)
+     (object-radius o)))
+
+(define (object-center-y o)
+  (+ (object-y o)
+     (object-radius o)))
+
 
 (define (object-draw o context)
   "Draw object o on context"
