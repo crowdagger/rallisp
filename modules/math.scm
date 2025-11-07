@@ -22,7 +22,15 @@
   #:pure
   #:use-module (scheme base)
   #:use-module (hoot ffi)
-  #:export (random clamp pi))
+  #:export (random
+            clamp
+            sign
+            atan2
+            pi))
+
+(define-foreign atan2
+  "math" "atan2"
+  f64 f64 -> f64)
 
 (define-foreign random
   "math" "random"
@@ -34,3 +42,9 @@
         (else x)))
 
 (define pi 3.14159265359)
+
+(define (sign x)
+  "Return -1 if x is negative, 1 else"
+  (if (positive? x)
+      1
+      -1))

@@ -83,7 +83,8 @@ window.addEventListener("load", async () => {
             setImageSmoothingEnabled: (ctx, enabled) => ctx.imageSmoothingEnabled = (enabled == 1)
         },
         math: {
-          random: () => Math.random()
+            atan2: (y, x) => Math.atan2(y, x),
+            random: () => Math.random()
         }
       }
     });

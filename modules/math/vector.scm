@@ -30,6 +30,7 @@
             set-vec2-y!
             with-vec2
             vec2-add!
+            vec2-rotate
             vec2-sub!
             vec2-mul-scalar!
             vec2-add
@@ -39,7 +40,8 @@
             vec2-magnitude
             vec2-normalize!
             vec2-wedge
-            vec2-clamp!))
+            vec2-clamp!
+            vec2->angle))
 
 ;; For speed, a vec2 is a wrapper around a bytevector so that we can
 ;; use unboxed floats.
@@ -117,3 +119,16 @@
 (define (vec2-clamp! v xmin ymin xmax ymax)
   (set-vec2-x! v (clamp (vec2-x v) xmin xmax))
   (set-vec2-y! v (clamp (vec2-y v) ymin ymax)))
+
+(define (vec2->angle v)
+  "Returns the angle between v and the x axis"
+  (atan2 (vec2-y v) (vec2-x v)))
+
+(define (vec2-rotate v angle)
+  "Rotate a vector by angle"
+  (let ([c (cos angle)]
+        [s (sin angle)]
+        [x (vec2-x v)]
+        [y (vec2-y v)])
+    (vec2 (- (* c x) (* s y))
+          (+ (* s x) (* c y)))))

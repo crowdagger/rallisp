@@ -39,13 +39,21 @@
 (define game-height   480.0)
 (define game-turn 1000.0)
 (define *current-turn* 0.0)
+(define *in:click?* #f)
+(define *in:mouse-x* 0)
+(define *in:mouse-y* 0)
+
+(define (reinit-inputs!)
+  "Reunitialize all inputs, at the END of a frame"
+  (set! *in:click?* #f))
 
 (define *game* (make-game))
 
 
-(define obj (make-object (vec2 100 100) 16.0 (vec2 10 0) 0 (make-image "assets/images/car.png")))
-(define car (make-car obj))
+(define obj (make-object (vec2 100 100) 16.0 (vec2 1.0 0.0) 0 (make-image "assets/images/car.png")))
+(define player (make-car obj))
 (register-object! *game* obj)
+(register-car! *game* player)
 
 (let lp ([n 20])
   (when (> n 0)
@@ -58,8 +66,8 @@
       (lp (- n 1)))))
           
 
-(register-car! *game* car)
-(set-car-acceleration! car (vec2 0 1))
+
+
 
 
 
@@ -95,28 +103,17 @@
   (fill-rect context 0.0 0.0 game-width game-height)
 
   (when (eq? (game-state *game*) 'prompt)
-    (let* ([speed (object-speed obj)]
-           [speed (vec2-mul-scalar speed 10)]
-           [x (object-center-x obj)]
-           [y (object-center-y obj)]
-           [new-x (+ x (vec2-x speed))]
-           [new-y (+ y (vec2-y speed))]
-           [v1 (vec2 (- new-x x) (- new-y y))]
-           [v2 (vec2 (- pos-x x) (- pos-y y))]
-           [dot (vec2-dot v1 v2)]
-           [wedge (vec2-wedge v1 v2)]
-           [mag (* (vec2-magnitude v1) (vec2-magnitude v2))]
-           [angle (asin (/ wedge mag))]
-           [color (if (< (abs angle) (* .25 pi))
-                      "green"
-                      "red")])
-      (log (format #f "ang: ~a mag: ~a" (asin (/ wedge mag)) (vec2-magnitude v2)))
-
-      (draw-line context 3 color x y pos-x pos-y)
-      (draw-line context 3 "blue" x y new-x new-y)))
-
+    ;; When in prompt state, process inputs
+    (let ([car-inputs (process-car-input player *in:mouse-x* *in:mouse-y* context)])
+      (set-car-acceleration! player (car car-inputs))
+      (set-car-steer! player (cdr car-inputs))
+      ;; If there is a click, enter running state
+      (when *in:click?*
+;        (set-car-acceleration! player (car car-inputs))
+;        (set-car-steer! player (cdr car-inputs))
+        (set-game-state! *game* 'running)
+        (set! *current-turn* 0))))
          
-    
   (game-draw *game* context)
     
   ;; Print score
@@ -124,6 +121,7 @@
   (set-font! context "bold 24px monospace")
   (set-text-align! context "left")
   (fill-text context (format #f "~a" *current-turn*) 300 300)
+  (reinit-inputs!)
   (request-animation-frame draw-callback))
 (define draw-callback (procedure->external draw))
 
@@ -132,17 +130,6 @@
 (define key:right "ArrowRight")
 (define key:confirm "Enter")
 
-(define pos-x 0)
-(define pos-y 0)
-
-(define (on-move event)
-  (let* ([offset-x (bounding-client-x canvas)]
-         [offset-y (bounding-client-y canvas)]
-         [x (- (mouse-x event) offset-x)]
-         [y (- (mouse-y event) offset-y)])
-    (set! pos-x x)
-    (set! pos-y y)))
-  
 (define (on-click event)
   (let* ([offset-x (bounding-client-x canvas)]
          [offset-y (bounding-client-y canvas)]
@@ -155,6 +142,15 @@
      (set! *current-turn* 0.0)
      (set-game-state! *game* 'running))
     (_ #f))))
+
+(define (on-move event)
+  (let* ([offset-x (bounding-client-x canvas)]
+         [offset-y (bounding-client-y canvas)]
+         [x (- (mouse-x event) offset-x)]
+         [y (- (mouse-y event) offset-y)])
+    (set! *in:mouse-x* x)
+    (set! *in:mouse-y* y)))
+  
 
 
 (define (on-key-down event)
@@ -175,5 +171,6 @@
                      (procedure->external on-key-up))
 (add-event-listener! canvas "click" (procedure->external on-click))
 (add-event-listener! canvas "mousemove" (procedure->external on-move))
+
 (request-animation-frame draw-callback)
 (timeout update-callback dt)
