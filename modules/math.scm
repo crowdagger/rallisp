@@ -26,7 +26,8 @@
             clamp
             sign
             atan2
-            pi))
+            pi
+            lerp))
 
 (define-foreign atan2
   "math" "atan2"
@@ -48,3 +49,7 @@
   (if (positive? x)
       1
       -1))
+
+(define (lerp v0 v1 t)
+  (+ (* (- 1 t) v0)
+     (* t v1)))
