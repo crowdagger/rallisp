@@ -32,7 +32,8 @@
             set-scale!
             set-transform!
             set-image-smoothing-enabled!
-            draw-line))
+            draw-line
+            draw-circle))
 
 ;; HTMLCanvasElement
 (define-foreign get-context
@@ -76,3 +77,6 @@
 (define-foreign draw-line
   "canvas" "drawLine"
   (ref extern) f64 (ref string) f64 f64 f64 f64 -> none)
+(define-foreign draw-circle
+  "canvas" "drawCircle"
+  (ref extern) (ref string) f64 f64 f64 -> none)

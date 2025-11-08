@@ -43,6 +43,15 @@
 (define *in:mouse-x* 0)
 (define *in:mouse-y* 0)
 
+(define controller-left 520)
+(define controller-top 360)
+(define controller-width 100)
+(define controller-height 100)
+(define controller-right (+ controller-left controller-width))
+(define controller-bottom (+ controller-top controller-height))
+(define controller-center-x (+ controller-left (/ controller-width 2)))
+(define controller-center-y (+ controller-top (/ controller-height 2)))
+
 (define (reinit-inputs!)
   "Reunitialize all inputs, at the END of a frame"
   (set! *in:click?* #f))
@@ -103,9 +112,21 @@
   (fill-rect context 0.0 0.0 game-width game-height)
 
   (when (eq? (game-state *game*) 'prompt)
+    ;; Display input-square
+    (set-fill-color! context "#000000")
+    (fill-rect context controller-left controller-top controller-width controller-height)
+    (draw-line context 3 "#ffffff" controller-left controller-center-y controller-right controller-center-y)
+    (draw-line context 3 "#ffffff" controller-center-x controller-top controller-center-x controller-bottom)
+
+    (when (and (<= *in:mouse-x* controller-right)
+               (<= *in:mouse-y* controller-bottom)
+               (>= *in:mouse-x* controller-left)
+               (>= *in:mouse-y* controller-top))
+      (draw-circle context "#FF0000" *in:mouse-x* *in:mouse-y* 3))
+    
     ;; When in prompt state, process inputs
     (let ([car-inputs (process-car-input player *in:mouse-x* *in:mouse-y* context)])
-      (set-car-acceleration! player 20)
+      (set-car-acceleration! player 50)
       (set-car-steer! player .1)
       ;; If there is a click, enter running state
       (when *in:click?*

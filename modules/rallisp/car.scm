@@ -136,6 +136,6 @@
                            (* (sign dot)
                               (clamp (vec2-magnitude v-est) 0 max-brake)))])
 
-    (draw-line context 3 color x y pos-x pos-y)
+;    (draw-line context 3 color x y pos-x pos-y)
     (draw-line context 3 "blue" x y new-x new-y)
     (cons acceleration angle)))

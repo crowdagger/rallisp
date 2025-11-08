@@ -74,7 +74,13 @@ window.addEventListener("load", async () => {
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
                 ctx.stroke();
-            }, 
+            },
+            drawCircle: (ctx, style, x, y, radius) => {
+                ctx.beginPath();
+                ctx.fillStyle = style;
+                ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+                ctx.fill();
+            },
             fillRect: (ctx, x, y, w, h) => ctx.fillRect(x, y, w, h),
             fillText: (ctx, text, x, y) => ctx.fillText(text, x, y),
             drawImage: (ctx, image, sx, sy, sw, sh, dx, dy, dw, dh) => ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh),
