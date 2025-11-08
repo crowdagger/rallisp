@@ -37,10 +37,10 @@
   (grip surface-grip))
              
 (define surf:asphalt
-  (make-surface "asphalt" "#2e2d2d" .01 .9))
+  (make-surface "asphalt" "#2e2d2d" .05 .9))
 
 (define surf:grass
-  (make-surface "grass" "#33ff0a" .05 .5))
+  (make-surface "grass" "#33ff0a" .15 .5))
 
 (define surf:sand
-  (make-surface "sand" "#f3ff0a" .1 .3))
+  (make-surface "sand" "#f3ff0a" .3 .3))
