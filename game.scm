@@ -185,7 +185,9 @@
          [offset-y (bounding-client-y canvas)]
          [x (- (mouse-x event) offset-x)]
          [y (- (mouse-y event) offset-y)])
-    (debug (format #f "x: ~a, y: ~a, d: ~a -> ~a" x y (segment-distance segment (vec2 x y)) (in-segment? segment (vec2 x y))))
+    (debug (format #f "x: ~a, y: ~a, s: ~a\n"
+                   x y
+                   (surface-name (track-surface track (vec2 x y)))))
     (set! *in:mouse-x* x)
     (set! *in:mouse-y* y)))
   

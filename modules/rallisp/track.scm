@@ -24,6 +24,7 @@
             track-segments
             track-draw
             track-default-surface
+            track-surface
             add-track-segment!))
 
 (define-record-type <track>
@@ -44,3 +45,14 @@
     (unless (eq? '() segments)
       (segment-draw (car segments) context)
       (lp (cdr segments)))))
+
+(define (track-surface track point)
+  "Returns the surface at a given point"
+  (let lp ([segments (track-segments track)])
+    (if (eq? '() segments)
+        (track-default-surface track)
+        (let ([s (car segments)]
+              [rest (cdr segments)])
+          (if (in-segment? s point)
+              (segment-surface s)
+              (lp rest))))))

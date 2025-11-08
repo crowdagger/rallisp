@@ -20,6 +20,7 @@
   #:export (<surface>
             surface?
             make-surface
+            surface-name
             surface-apparence
             surface-rr
             surface-grip
@@ -28,17 +29,18 @@
             surf:sand))
 
 (define-record-type <surface>
-  (make-surface apparence rolling-resistance grip)
+  (make-surface name apparence rolling-resistance grip)
   surface?
+  (name surface-name)
   (apparence surface-apparence)
   (rolling-resistance surface-rr)
   (grip surface-grip))
              
 (define surf:asphalt
-  (make-surface "#2e2d2d" .01 .9))
+  (make-surface "asphalt" "#2e2d2d" .01 .9))
 
 (define surf:grass
-  (make-surface "#33ff0a" .05 .5))
+  (make-surface "grass" "#33ff0a" .05 .5))
 
 (define surf:sand
-  (make-surface "#f3ff0a" .1 .3))
+  (make-surface "sand" "#f3ff0a" .1 .3))
