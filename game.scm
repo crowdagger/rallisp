@@ -142,35 +142,33 @@
       (draw-circle context "#FF0000" *in:mouse-x* *in:mouse-y* 3))
     
     ;; When in prompt state, process inputs
-    (let ([car-inputs (process-car-input player *in:mouse-x* *in:mouse-y* context)])
-      ;; If there is a click, enter running state
-      (when (and *in:click?*
-                 (mouse-in-controller?))
-        (let* ([x (/ (- *in:mouse-x* controller-center-x)
-                    (/ controller-width 2))]
-              [y (/ (- controller-center-y *in:mouse-y*) ; reverted because y-axis goes down
-                    (/ controller-height 2))]
-              [power (if (positive? y)
-                         (* y (car-max-acceleration player))
-                         (* y (car-max-brake player)))]
-              [steer (* x (car-max-steer player))])
-          (debug (format #f "x: ~a y: ~a\n" x y))
-          
+    ;; If there is a click, enter running state
+    (when (and *in:click?*
+               (mouse-in-controller?))
+      (let* ([x (/ (- *in:mouse-x* controller-center-x)
+                   (/ controller-width 2))]
+             [y (/ (- controller-center-y *in:mouse-y*) ; reverted because y-axis goes down
+                   (/ controller-height 2))]
+             [power (if (positive? y)
+                        (* y (car-max-acceleration player))
+                        (* y (car-max-brake player)))]
+             [steer (* x (car-max-steer player))])
         
-          (set-car-acceleration! player power)
-          (set-car-steer! player steer)
-          (set-game-state! *game* 'running)
-          (set! *current-turn* 0)))))
+        
+        (set-car-acceleration! player power)
+        (set-car-steer! player steer)
+        (set-game-state! *game* 'running)
+        (set! *current-turn* 0))))
          
 
     
-  ;; Print score
-  (set-fill-color! context "#ffffff")
-  (set-font! context "bold 12px monospace")
-  (set-text-align! context "left")
-  (fill-text context (format #f "~a km/h" (inexact->exact (round (vec2-magnitude (object-speed obj))))) 20 450)
-  (reinit-inputs!)
-  (request-animation-frame draw-callback))
+    ;; Print speed
+    (set-fill-color! context "#ffffff")
+    (set-font! context "bold 12px monospace")
+    (set-text-align! context "left")
+    (fill-text context (format #f "~a km/h" (inexact->exact (round (vec2-magnitude (object-speed obj))))) 20 450)
+    (reinit-inputs!)
+    (request-animation-frame draw-callback))
 (define draw-callback (procedure->external draw))
 
 ;; Input
