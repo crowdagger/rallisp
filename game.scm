@@ -71,7 +71,7 @@
 (register-object! *game* obj)
 (register-car! *game* player)
 
-(define segment (make-segment surf:asphalt (vec2 0 100) (vec2 640 150) 30))
+(define segment (make-segment surf:asphalt (vec2 0 100) (vec2 320 150) 30))
 
 (let lp ([n 0])
   (when (> n 0)
@@ -180,6 +180,7 @@
          [offset-y (bounding-client-y canvas)]
          [x (- (mouse-x event) offset-x)]
          [y (- (mouse-y event) offset-y)])
+    (debug (format #f "x: ~a, y: ~a, d: ~a" x y (segment-distance segment (vec2 x y))))
     (set! *in:mouse-x* x)
     (set! *in:mouse-y* y)))
   

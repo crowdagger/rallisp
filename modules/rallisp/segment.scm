@@ -19,6 +19,7 @@
   #:use-module (srfi srfi-9)
   #:use-module (math vector)
   #:use-module (dom canvas)
+  #:use-module (dom document)
   #:use-module (rallisp surface)
   #:export (<segment>
             segment?
@@ -62,7 +63,7 @@ Actually returns #f if the point can't be projected on the segment"
          [ap (vec2-sub point
                        (segment-start segment))]
          [dot (vec2-dot unit ap)]
-         [wedge (vec2-dot unit ap)])
+         [wedge (vec2-wedge unit ap)])
     (if (and (positive? dot)
              (<= dot length))
         wedge
