@@ -40,10 +40,10 @@
   (let ([segments (track-segments track)])
     (set-track-segments! track (cons segment segments))))
 
-(define (track-draw track context)
+(define (track-draw track context viewport)
   (let lp ([segments (track-segments track)])
     (unless (eq? '() segments)
-      (segment-draw (car segments) context)
+      (segment-draw (car segments) context viewport)
       (lp (cdr segments)))))
 
 (define (track-surface track point)

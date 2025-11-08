@@ -76,14 +76,16 @@
      (object-radius o)))
 
 
-(define (object-draw o context)
+(define (object-draw o context viewport)
   "Draw object o on context"
   (let* ([r (object-radius o)]
          [d (* 2 r)]
          [rot (object-rotation o)]
+         [x-v (- (vec2-x viewport))]
+         [y-v (- (vec2-y viewport))]
          [x (object-x o)]
          [y (object-y o)])
-      (set-transform! context 1.0 0 0 1.0 (+ x r) (+ y r))
+      (set-transform! context 1.0 0 0 1.0 (+ x r x-v) (+ y r y-v))
       (rotate! context rot)
       
       (draw-image context (object-image o)

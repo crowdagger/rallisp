@@ -40,17 +40,19 @@
   (end segment-end)
   (radius segment-radius))
 
-(define (segment-draw segment context)
+(define (segment-draw segment context viewport)
   "Draw the segment on the context given"
   (let* ([start (segment-start segment)]
-         [end (segment-end segment)])
+         [end (segment-end segment)]
+         [v-x (- (vec2-x viewport))]
+         [v-y (- (vec2-y viewport))])
     (draw-line context
-             (* 2 (segment-radius segment))
-             (surface-apparence (segment-surface segment))
-             (vec2-x start)
-             (vec2-y start)
-             (vec2-x end)
-             (vec2-y end))))
+               (* 2 (segment-radius segment))
+               (surface-apparence (segment-surface segment))
+               (+ (vec2-x start) v-x)
+               (+ (vec2-y start) v-y)
+               (+ (vec2-x end) v-x)
+               (+ v-y (vec2-y end)))))
 
 
 (define (segment-distance segment point)

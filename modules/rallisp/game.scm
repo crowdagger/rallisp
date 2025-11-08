@@ -19,10 +19,13 @@
   #:use-module (rallisp track)
   #:use-module (rallisp surface)
   #:use-module (dom document)
+  #:use-module (math vector)
   #:export (<game>
             make-game
             game?
             game-state
+            game-viewport
+            set-game-viewport!
             set-game-state!
             register-object!
             register-car!
@@ -34,9 +37,10 @@
             game-update!))
 
 (define-record-type <game>
-  (%make-game state objects cars track)
+  (%make-game state viewport objects cars track)
   game?
   (state game-state set-game-state!)
+  (viewport game-viewport set-game-viewport!)
   (objects game-objects set-game-objects!)
   (cars game-cars set-game-cars!)
   (track game-track set-game-track!))
@@ -45,7 +49,7 @@
   (eq? x '()))
 
 (define (make-game)
-  (%make-game 'prompt '() '() (make-track surf:grass)))
+  (%make-game 'prompt (vec2 0 0) '() '() (make-track surf:grass)))
 
 (define (register-object! game object)
   (set-game-objects! game
@@ -56,10 +60,12 @@
                  (cons c (game-cars game))))
 
 (define (game-draw game context)
-  (let lp ([objects (game-objects game)])
-    (unless (eq? '() objects)
-      (object-draw (car objects) context)
-      (lp (cdr objects)))))
+  (let ([viewport (game-viewport game)])
+    (track-draw (game-track game) context viewport)
+    (let lp ([objects (game-objects game)])
+      (unless (eq? '() objects)
+        (object-draw (car objects) context viewport)
+        (lp (cdr objects))))))
 
 (define (game-update! game dt)
   (let lp ([cars (game-cars game)])

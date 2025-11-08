@@ -126,8 +126,10 @@
   (set-fill-color! context "#006600")
   (fill-rect context 0.0 0.0 game-width game-height)
 
-  ;; Draw track
-  (track-draw track context)
+  (set-game-viewport! *game*
+                      (vec2 (- (object-center-x obj) 320)
+                            (- (object-center-y obj) 240)))
+  (game-draw *game* context)
 
   (when (eq? (game-state *game*) 'prompt)
     ;; Display input-square
@@ -160,7 +162,7 @@
           (set-game-state! *game* 'running)
           (set! *current-turn* 0)))))
          
-  (game-draw *game* context)
+
     
   ;; Print score
   (set-fill-color! context "#ffffff")
