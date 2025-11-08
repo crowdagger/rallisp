@@ -30,6 +30,8 @@
              (math vector)
              (srfi srfi-9)
              (rallisp object)
+             (rallisp surface)
+             (rallisp segment)
              (rallisp game)
              (rallisp car))
 
@@ -68,6 +70,8 @@
 (define player (make-car obj))
 (register-object! *game* obj)
 (register-car! *game* player)
+
+(define segment (make-segment surf:asphalt (vec2 0 100) (vec2 640 150) 30))
 
 (let lp ([n 0])
   (when (> n 0)
@@ -112,9 +116,13 @@
 (define (draw prev-time)
   ;; Clear canvas
   (clear-rect context 0.0 0.0 game-width game-height)
+
   ;; Draw background
   (set-fill-color! context "#006600")
   (fill-rect context 0.0 0.0 game-width game-height)
+
+  ;; Draw track
+  (segment-draw segment context)
 
   (when (eq? (game-state *game*) 'prompt)
     ;; Display input-square
