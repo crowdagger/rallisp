@@ -77,6 +77,7 @@
          [v-front (vec2-add speed accel-front)]
          [v-front (vec2-rotate v-front
                                steer)]
+         [v-front (vec2-mul-scalar v-front (cos steer))]
          [new-pos-rear (vec2-add pos-rear
                              (vec2-mul-scalar v-rear
                                               dt))]

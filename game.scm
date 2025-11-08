@@ -105,8 +105,8 @@
   (when (eq? (game-state *game*) 'prompt)
     ;; When in prompt state, process inputs
     (let ([car-inputs (process-car-input player *in:mouse-x* *in:mouse-y* context)])
-      (set-car-acceleration! player 0)
-      (set-car-steer! player .2)
+      (set-car-acceleration! player 20)
+      (set-car-steer! player .1)
       ;; If there is a click, enter running state
       (when *in:click?*
 ;        (set-car-acceleration! player (car car-inputs))
