@@ -14,6 +14,8 @@
 
 (define-module (rallisp car)
   #:use-module (rallisp object)
+  #:use-module (rallisp track)
+  #:use-module (rallisp surface)
   #:use-module (math vector)
   #:use-module (dom canvas)
   #:use-module (dom document)
@@ -57,16 +59,19 @@
 (define (car-rotation c)
   (object-rotation (car-object c)))
 
-(define (car-update! c dt)
+(define (car-update! c dt track)
   (let* ([o (car-object c)]
          [r (object-radius o)]
          [wb (car-wheel-base c)]
          [steer (car-steer c)]
-         [speed (object-speed o)]
          [pos-x (object-center-x o)]
          [pos-y (object-center-y o)]
+         [surface (track-surface track (vec2 pos-x pos-y))]
+         [speed (vec2-mul-scalar
+                 (object-speed o)
+                 (- 1.0 (surface-rr surface)))]
          [rot (object-rotation o)]
-         [power (* (car-acceleration c) dt)]
+         [power (* (car-acceleration c) dt (surface-grip surface))]
          [accel-rear (vec2-mul-scalar (vec2-normalize speed)
                                       power)]
          [accel-front accel-rear]

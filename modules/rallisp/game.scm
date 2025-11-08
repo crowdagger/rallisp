@@ -16,6 +16,8 @@
   #:use-module (srfi srfi-9)
   #:use-module (rallisp object)
   #:use-module (rallisp car)
+  #:use-module (rallisp track)
+  #:use-module (rallisp surface)
   #:use-module (dom document)
   #:export (<game>
             make-game
@@ -25,22 +27,25 @@
             register-object!
             register-car!
             game-draw
+            game-track
+            set-game-track!
             game-collides?
             game-collisions
             game-update!))
 
 (define-record-type <game>
-  (%make-game state objects cars)
+  (%make-game state objects cars track)
   game?
   (state game-state set-game-state!)
   (objects game-objects set-game-objects!)
-  (cars game-cars set-game-cars!))
+  (cars game-cars set-game-cars!)
+  (track game-track set-game-track!))
 
 (define (nil? x)
   (eq? x '()))
 
 (define (make-game)
-  (%make-game 'prompt '() '()))
+  (%make-game 'prompt '() '() (make-track surf:grass)))
 
 (define (register-object! game object)
   (set-game-objects! game
@@ -59,7 +64,7 @@
 (define (game-update! game dt)
   (let lp ([cars (game-cars game)])
     (unless (eq? '() cars)
-      (car-update! (car cars) dt)
+      (car-update! (car cars) dt (game-track game))
       (lp (cdr cars))))
   (let lp ([objects (game-objects game)])
     (unless (eq? '() objects)

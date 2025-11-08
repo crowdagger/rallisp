@@ -72,7 +72,7 @@
 (register-object! *game* obj)
 (register-car! *game* player)
 
-(define track (make-track surf:grass))
+(define track (game-track *game*))
 (define segment (make-segment surf:asphalt (vec2 0 100) (vec2 320 150) 30))
 (add-track-segment! track segment)
 (add-track-segment! track (make-segment surf:asphalt (vec2 320 150) (vec2 480 240) 30))
