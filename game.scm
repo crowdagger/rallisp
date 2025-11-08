@@ -29,6 +29,7 @@
              (math rect)
              (math vector)
              (srfi srfi-9)
+             (rallisp track)
              (rallisp object)
              (rallisp surface)
              (rallisp segment)
@@ -71,7 +72,11 @@
 (register-object! *game* obj)
 (register-car! *game* player)
 
+(define track (make-track surf:grass))
 (define segment (make-segment surf:asphalt (vec2 0 100) (vec2 320 150) 30))
+(add-track-segment! track segment)
+(add-track-segment! track (make-segment surf:asphalt (vec2 320 150) (vec2 480 240) 30))
+(add-track-segment! track (make-segment surf:asphalt (vec2 480 240) (vec2 640 480) 30))
 
 (let lp ([n 0])
   (when (> n 0)
@@ -122,7 +127,7 @@
   (fill-rect context 0.0 0.0 game-width game-height)
 
   ;; Draw track
-  (segment-draw segment context)
+  (track-draw track context)
 
   (when (eq? (game-state *game*) 'prompt)
     ;; Display input-square
@@ -180,7 +185,7 @@
          [offset-y (bounding-client-y canvas)]
          [x (- (mouse-x event) offset-x)]
          [y (- (mouse-y event) offset-y)])
-    (debug (format #f "x: ~a, y: ~a, d: ~a" x y (segment-distance segment (vec2 x y))))
+    (debug (format #f "x: ~a, y: ~a, d: ~a -> ~a" x y (segment-distance segment (vec2 x y)) (in-segment? segment (vec2 x y))))
     (set! *in:mouse-x* x)
     (set! *in:mouse-y* y)))
   

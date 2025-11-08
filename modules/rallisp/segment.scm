@@ -29,7 +29,8 @@
             segment-end
             segment-radius
             segment-draw
-            segment-distance))
+            segment-distance
+            in-segment?))
 
 (define-record-type <segment>
   (make-segment surface start end radius)
@@ -67,4 +68,12 @@ Actually returns #f if the point can't be projected on the segment"
     (if (and (positive? dot)
              (<= dot length))
         wedge
+        #f)))
+
+(define (in-segment? segment point)
+  "Return #t if point is in segment, #f else"
+  (let ([d (segment-distance segment point)]
+        [r (segment-radius segment)])
+    (if d
+        (<= (abs d) r)
         #f)))
