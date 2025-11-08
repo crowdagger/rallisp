@@ -50,12 +50,12 @@
 (define *game* (make-game))
 
 
-(define obj (make-object (vec2 100 100) 16.0 (vec2 1.0 0.0) 0 (make-image "assets/images/car.png")))
+(define obj (make-object (vec2 100 100) 16.0 (vec2 50.0 0.0) 0 (make-image "assets/images/car.png")))
 (define player (make-car obj))
 (register-object! *game* obj)
 (register-car! *game* player)
 
-(let lp ([n 20])
+(let lp ([n 0])
   (when (> n 0)
     (let* ([x (* (random) game-width)]
            [y (* (random) game-height)]
@@ -105,8 +105,8 @@
   (when (eq? (game-state *game*) 'prompt)
     ;; When in prompt state, process inputs
     (let ([car-inputs (process-car-input player *in:mouse-x* *in:mouse-y* context)])
-      (set-car-acceleration! player (car car-inputs))
-      (set-car-steer! player (cdr car-inputs))
+      (set-car-acceleration! player 0)
+      (set-car-steer! player .2)
       ;; If there is a click, enter running state
       (when *in:click?*
 ;        (set-car-acceleration! player (car car-inputs))
@@ -120,7 +120,7 @@
   (set-fill-color! context "#ffffff")
   (set-font! context "bold 12px monospace")
   (set-text-align! context "left")
-  (fill-text context (format #f "~a km/h" (vec2-magnitude (object-speed obj))) 20 400)
+  (fill-text context (format #f "~a km/h" (inexact->exact (round (vec2-magnitude (object-speed obj))))) 20 450)
   (reinit-inputs!)
   (request-animation-frame draw-callback))
 (define draw-callback (procedure->external draw))

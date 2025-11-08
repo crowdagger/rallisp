@@ -39,6 +39,7 @@
             vec2-dot
             vec2-magnitude
             vec2-normalize!
+            vec2-normalize
             vec2-wedge
             vec2-clamp!
             vec2->angle))
@@ -115,6 +116,11 @@
     (let ((m (vec2-magnitude v)))
       (set-vec2-x! v (/ (vec2-x v) m))
       (set-vec2-y! v (/ (vec2-y v) m)))))
+
+(define (vec2-normalize v)
+  (let ([new-v (vec2 (vec2-x v) (vec2-y v))])
+    (vec2-normalize! new-v)
+    new-v))
 
 (define (vec2-clamp! v xmin ymin xmax ymax)
   (set-vec2-x! v (clamp (vec2-x v) xmin xmax))

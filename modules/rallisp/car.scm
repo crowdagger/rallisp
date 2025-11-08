@@ -31,39 +31,75 @@
             set-car-steer!
             car-max-acceleration
             car-max-steer
+            car-wheel-base
             process-car-input))
 
 (define-record-type <car>
-  (%make-car object acceleration steer max-acceleration max-brake max-steer)
+  (%make-car object acceleration steer max-acceleration max-brake max-steer wheel-base)
   car?
   (object car-object)
   (acceleration car-acceleration set-car-acceleration!)
   (steer car-steer set-car-steer!)
   (max-acceleration car-max-acceleration)
+  (wheel-base car-wheel-base)
   (max-brake car-max-brake)
   (max-steer car-max-steer))
 
-(define* (make-car object #:optional (max-acceleration 50) (max-brake 100) (max-steer 1.0))
-  (%make-car object .0 .0 max-acceleration max-brake max-steer))
+(define* (make-car object #:optional
+                   (max-acceleration 30)
+                   (max-brake 50)
+                   (max-steer (* .25 pi))
+                   (wheel-base .7))
+                              
+  (%make-car object .0 .0 max-acceleration max-brake max-steer wheel-base))
 
 (define (car-rotation c)
   (object-rotation (car-object c)))
 
 (define (car-update! c dt)
   (let* ([o (car-object c)]
-         [acceleration (* (car-acceleration c) dt)]
-         [angle-rear (car-rotation c)]
-         [angle-front (+ (car-steer c) angle-rear)]
-         [dv (vec2-rotate (vec2 1 0)
-                          angle-front)]
-         [dv (vec2-mul-scalar dv acceleration)]
-         [speed (object-speed o)])
-    (debug (format #f "acceleration: ~a (~a)\n" acceleration (car-acceleration c)))
-    (debug (format #f "dv: ~a, ~a\n" (vec2-x dv) (vec2-y dv)))
-    (debug (format #f "speed: ~a, ~a\n" (vec2-x speed) (vec2-y speed)))
-
-    (set-object-rotation! o (vec2->angle speed))
-    (set-object-speed! o (vec2-add speed dv))))
+         [r (object-radius o)]
+         [wb (car-wheel-base c)]
+         [steer (car-steer c)]
+         [speed (object-speed o)]
+         [pos-x (object-center-x o)]
+         [pos-y (object-center-y o)]
+         [rot (object-rotation o)]
+         [power (* (car-acceleration c) dt)]
+         [accel-rear (vec2-mul-scalar (vec2-normalize speed)
+                                      power)]
+         [accel-front accel-rear]
+         [pos-rear (vec2 (- pos-x (* r wb))
+                         pos-y)]
+         [pos-front (vec2 (+ pos-x (* r wb))
+                         pos-y)]
+         [v-rear (vec2-add speed accel-rear)]
+         [v-front (vec2-add speed accel-front)]
+         [v-front (vec2-rotate v-front
+                               steer)]
+         [new-pos-rear (vec2-add pos-rear
+                             (vec2-mul-scalar v-rear
+                                              dt))]
+         [new-pos-front (vec2-add pos-front
+                              (vec2-mul-scalar v-front dt))]
+                             
+         [new-heading (vec2-normalize
+                       (vec2-sub new-pos-front
+                                 new-pos-rear))]
+         [new-v (vec2-mul-scalar (vec2-sub (vec2-add new-pos-front new-pos-rear)
+                                           (vec2-add pos-front pos-rear))
+                                 (/ .5 dt))])
+    
+    (debug (format #f "steer: ~a\n" steer))
+    (debug (format #f "v-front: ~a, ~a\n" (vec2-x v-front) (vec2-y v-front)))
+    (debug (format #f "v-rear: ~a, ~a\n" (vec2-x v-rear) (vec2-y v-rear)))
+    (debug (format #f "pos-front: ~a, ~a\n" (vec2-x pos-front) (vec2-y pos-front)))
+    (debug (format #f "pos-rear: ~a, ~a\n" (vec2-x pos-rear) (vec2-y pos-rear)))
+    (debug (format #f "new-pos-front: ~a, ~a\n" (vec2-x new-pos-front) (vec2-y new-pos-front)))
+    (debug (format #f "new-pos-rear: ~a, ~a\n" (vec2-x new-pos-rear) (vec2-y new-pos-rear)))
+    (debug (format #f "new-v: ~a, ~a\n" (vec2-x new-v) (vec2-y new-v)))
+    (set-object-rotation! o (vec2->angle new-v))
+    (set-object-speed! o new-v)))
 
 (define (process-car-input c pos-x pos-y context)
   (let* ([max-angle (car-max-steer c)]
@@ -77,7 +113,7 @@
          [new-x (+ x (vec2-x speed))]
          [new-y (+ y (vec2-y speed))]
          [v-spd (vec2 (- new-x x) (- new-y y))]
-         [v-est (vec2 (- pos-x new-x) (- pos-y new-y))]
+         [v-est (vec2 (- pos-x x) (- pos-y y))]
          [dot (vec2-dot v-spd v-est)]
          [wedge (vec2-wedge v-spd v-est)]
          [mag2 (* (vec2-magnitude v-spd) (vec2-magnitude v-est))]
