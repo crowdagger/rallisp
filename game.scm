@@ -51,6 +51,11 @@
 (define controller-bottom (+ controller-top controller-height))
 (define controller-center-x (+ controller-left (/ controller-width 2)))
 (define controller-center-y (+ controller-top (/ controller-height 2)))
+(define (mouse-in-controller?)
+  (and (<= *in:mouse-x* controller-right)
+       (<= *in:mouse-y* controller-bottom)
+       (>= *in:mouse-x* controller-left)
+       (>= *in:mouse-y* controller-top)))
 
 (define (reinit-inputs!)
   "Reunitialize all inputs, at the END of a frame"
@@ -118,22 +123,29 @@
     (draw-line context 3 "#ffffff" controller-left controller-center-y controller-right controller-center-y)
     (draw-line context 3 "#ffffff" controller-center-x controller-top controller-center-x controller-bottom)
 
-    (when (and (<= *in:mouse-x* controller-right)
-               (<= *in:mouse-y* controller-bottom)
-               (>= *in:mouse-x* controller-left)
-               (>= *in:mouse-y* controller-top))
+    (when (mouse-in-controller?)
       (draw-circle context "#FF0000" *in:mouse-x* *in:mouse-y* 3))
     
     ;; When in prompt state, process inputs
     (let ([car-inputs (process-car-input player *in:mouse-x* *in:mouse-y* context)])
-      (set-car-acceleration! player 50)
-      (set-car-steer! player .1)
       ;; If there is a click, enter running state
-      (when *in:click?*
-;        (set-car-acceleration! player (car car-inputs))
-;        (set-car-steer! player (cdr car-inputs))
-        (set-game-state! *game* 'running)
-        (set! *current-turn* 0))))
+      (when (and *in:click?*
+                 (mouse-in-controller?))
+        (let* ([x (/ (- *in:mouse-x* controller-center-x)
+                    (/ controller-width 2))]
+              [y (/ (- controller-center-y *in:mouse-y*) ; reverted because y-axis goes down
+                    (/ controller-height 2))]
+              [power (if (positive? y)
+                         (* y (car-max-acceleration player))
+                         (* y (car-max-brake player)))]
+              [steer (* x (car-max-steer player))])
+          (debug (format #f "x: ~a y: ~a\n" x y))
+          
+        
+          (set-car-acceleration! player power)
+          (set-car-steer! player steer)
+          (set-game-state! *game* 'running)
+          (set! *current-turn* 0)))))
          
   (game-draw *game* context)
     
@@ -152,17 +164,8 @@
 (define key:confirm "Enter")
 
 (define (on-click event)
-  (let* ([offset-x (bounding-client-x canvas)]
-         [offset-y (bounding-client-y canvas)]
-         [x (- (mouse-x event) offset-x)]
-         [y (- (mouse-y event) offset-y)])
-  (match (game-state *game*)
-    ('running
-     #f)
-    ('prompt
-     (set! *current-turn* 0.0)
-     (set-game-state! *game* 'running))
-    (_ #f))))
+  (set! *in:click?* #t))
+
 
 (define (on-move event)
   (let* ([offset-x (bounding-client-x canvas)]

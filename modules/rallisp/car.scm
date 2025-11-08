@@ -30,6 +30,7 @@
             car-steer
             set-car-steer!
             car-max-acceleration
+            car-max-brake
             car-max-steer
             car-wheel-base
             process-car-input))
@@ -48,7 +49,7 @@
 (define* (make-car object #:optional
                    (max-acceleration 30)
                    (max-brake 50)
-                   (max-steer (* .25 pi))
+                   (max-steer .25)
                    (wheel-base .7))
                               
   (%make-car object .0 .0 max-acceleration max-brake max-steer wheel-base))
