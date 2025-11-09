@@ -86,7 +86,10 @@
          [speed (vec2-mul-scalar
                  (object-speed o)
                  (- 1.0 (* dt (surface-rr surface))))]
-         [heading (vec2-normalize speed)]
+         [heading (if (zero? (vec2-magnitude speed))
+                      (vec2-rotate (vec2 1 0)
+                                   (car-rotation c))
+                      (vec2-normalize speed))]
          [power (* (car-acceleration c) dt (surface-grip surface))]
          [new-magnitude (+ power  (vec2-magnitude speed))]
          [accel-rear (vec2-mul-scalar (vec2-normalize speed)
@@ -106,15 +109,22 @@
                                                   dt))]
          [new-pos-front (vec2-add pos-front
                                   (vec2-mul-scalar v-front dt))]
-         [new-heading (vec2-normalize
-                       (vec2-sub new-pos-front
-                                 new-pos-rear))]
+         [new-heading (if (and (= (vec2-x new-pos-front)
+                                  (vec2-x new-pos-rear))
+                               (= (vec2-y new-pos-front)
+                                  (vec2-y new-pos-rear)))
+                          heading
+                          (vec2-normalize
+                           (vec2-sub new-pos-front
+                                     new-pos-rear)))]
          [new-v (vec2-mul-scalar new-heading
                                  new-magnitude)])
     (debug (format #f "pos-front: ~a, ~a\n" (vec2-x pos-front) (vec2-y pos-front)))
     (debug (format #f "pos-rear: ~a, ~a\n" (vec2-x pos-rear) (vec2-y pos-rear)))
     (debug (format #f "new-pos-front: ~a, ~a\n" (vec2-x new-pos-front) (vec2-y new-pos-front)))
     (debug (format #f "new-pos-rear: ~a, ~a\n" (vec2-x new-pos-rear) (vec2-y new-pos-rear)))
+    (debug (format #f "new-magnitude: ~a\n" new-magnitude))
+    (debug (format #f "new-heading: ~a, ~a\n" (vec2-x new-heading) (vec2-y new-heading)))
     (debug (format #f "new-v: ~a, ~a\n" (vec2-x new-v) (vec2-y new-v)))
     (unless (< new-magnitude min-speed)
       (set-object-rotation! o (vec2->angle new-heading)))

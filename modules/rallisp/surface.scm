@@ -27,6 +27,7 @@
             surf:asphalt
             surf:grass
             surf:sand
+            surf:glass
             surf:compact-sand))
 
 (define-record-type <surface>
@@ -44,7 +45,10 @@
   (make-surface "grass" "#33ff0a" .15 .5))
 
 (define surf:sand
-  (make-surface "sand" "#f3ff0a" .3 .3))
+  (make-surface "sand" "#f3ff0a" .5 .3))
 
 (define surf:compact-sand
   (make-surface "compact-sand" "#994d0b" .1 .8))
+
+(define surf:glass
+  (make-surface "glass" "#c2f2f1" .1 .01))

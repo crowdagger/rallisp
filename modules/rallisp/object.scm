@@ -95,7 +95,6 @@
                 0.0 0.0 d d 
                 (- r) (- r) d d)
     (set-transform! context 1 0 0 1 0 0)
-    (set-filter! context "")
     (restore! context)))
 
 (define (object-update! o dt)

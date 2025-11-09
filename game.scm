@@ -34,7 +34,8 @@
              (rallisp surface)
              (rallisp segment)
              (rallisp game)
-             (rallisp car))
+             (rallisp car)
+             (levels level-1))
 
 
 ;; Game data
@@ -67,31 +68,13 @@
 (define *game* (make-game))
 
 
-(define obj (make-object (vec2 100 100) 16.0 (vec2 50.0 0.0) 0 (make-image "assets/images/car.png")))
+(define obj (make-object (vec2 0 0) 16.0 (vec2 0 0.0) 0 (make-image "assets/images/car.png")))
 (define player (make-car obj))
 (register-object! *game* obj)
 (register-car! *game* player)
 
-(define track (game-track *game*))
-(define segment (make-segment surf:asphalt 50))
-(add-segment-point! segment (vec2 -300 0))
-(add-segment-point! segment (vec2 0 100))
-(add-segment-point! segment (vec2 320 150))
-(add-segment-point! segment (vec2 480 240))
-(add-segment-point! segment (vec2 640 480))
-(add-segment-point! segment (vec2 640 800))
-(add-segment-point! segment (vec2 340 1000))
-(add-segment-point! segment (vec2 0 900))
-(add-segment-point! segment (vec2 -200 600))
-(add-segment-point! segment (vec2 -1000 400))
-(add-track-segment! track segment)
-(let ([other-segment (make-segment surf:compact-sand 30)])
-  (add-segment-point! other-segment (vec2 320 150))
-  (add-segment-point! other-segment (vec2 360 0))
-  (add-segment-point! other-segment (vec2 800 -400))
-  (add-segment-point! other-segment (vec2 1200 -400))
-  (add-segment-point! other-segment (vec2 1500 -300))
-  (add-track-segment! track other-segment))
+(define track (make-level-1))
+(set-game-track! *game* track)
 
   
 (let lp ([n 0])
