@@ -73,6 +73,9 @@
 (register-object! *game* obj)
 (register-car! *game* player)
 
+(define target (make-object (vec2 1930 -3000) 70 (vec2 0 0) 0 (make-image "assets/images/line.png")))
+(register-object! *game* target)
+
 (define track (make-level-1))
 (set-game-track! *game* track)
 
