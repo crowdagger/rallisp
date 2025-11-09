@@ -1,11 +1,12 @@
 body {
-    /* background-color: #000; */
+    background-color: #000;
     margin: 0;
     width: 100vw;
     height: 100vh;
 }
 
 canvas {
+    image-rendering: pixelated;
     display: block;
     margin: 0 auto;
 }

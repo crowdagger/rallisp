@@ -80,3 +80,18 @@
 (define-foreign draw-circle
   "canvas" "drawCircle"
   (ref extern) (ref string) f64 f64 f64 -> none)
+(define-foreign set-stroke-style
+  "canvas" "setStrokeStyle"
+  (ref extern) (ref string) -> none)
+(define-foreign begin-path
+  "canvas" "beginPath"
+  (ref extern) -> none)
+(define-foreign move-to
+  "canvas" "moveTo"
+  (ref extern) f64 f64 -> none)
+(define-foreign line
+  "canvas" "line"
+  (ref extern) f64 f64 -> none)
+(define-foreign stroke
+  "canvas" "stroke"
+  (ref extern) -> none)
