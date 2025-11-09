@@ -1,28 +1,18 @@
-# Guile Hoot Game Jam Template
+# Rallisp
 
-This repository is the quickest way to get started building games in
-Scheme that run in web browsers with Guile Hoot!
+An attempt at a turn-based racing game.
 
-It has everything you need:
+## Controls
 
-* A simple Breakout clone to use as a starting point.
+To enter your acceleration/braking and steering, click on the bottom-right corner.
 
-* HTML and JavaScript boilerplate for running the game in a web page.
+## Credits and license
 
-* DOM bindings for events, images, audio, and more.
+Based on the [Hoot Game Jam
+Template](https://codeberg.org/spritely/hoot-game-jam-template). The
+license is the same Apache License.
 
-* HTML5 canvas bindings for rendering.
-
-* Some simple but useful game math modules.
-
-* A `Makefile` for compiling the game to WebAssembly, running a
-  development web server, and generating zip bundles for publishing to
-  itch.io.
-
-* A Guix `manifest.scm` file for creating a development environment
-  with `guix shell`.
-
-## Tutorial
+## Building
 
 The fastest way to get everything you need is to use [GNU
 Guix](https://guix.gnu.org), a wonderful package manager written in
@@ -60,8 +50,3 @@ make bundle
 Upload the resulting zip file to your itch.io game page and share your
 game with others!  Have fun!
 
-## Getting help
-
-If you have questions or need some help, visit the [Spritely
-Institute's forum](https://community.spritely.institute/) or connect
-to the `#spritely` channel on the Libera.Chat IRC network.
