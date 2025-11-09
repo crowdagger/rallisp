@@ -104,6 +104,8 @@
      (game-update! *game* (* .001 dt))
 ;     (log (format #f "collision?: ~a\n" (length (game-collisions *game*))))
 ;     (set-object-rotation! obj (+ (object-rotation obj) 0.01))
+     (when (object-collides? target obj)
+       (set-game-state! *game* 'end))
      (when (> *current-turn* game-turn)
          (set! *current-turn* 0)
          (set-game-state! *game* 'prompt)))
@@ -133,6 +135,13 @@
                             (- (object-center-y obj) 240)))
   (game-draw *game* context)
 
+  (when (eq? (game-state *game*) 'end)
+    ;; Add transparency to whole screen
+    (set-global-alpha! context .7)
+    (set-fill-color! context "#000000")
+    (fill-rect context 0 0 game-width game-height)
+    (set-global-alpha! context 1))
+  
   (when (eq? (game-state *game*) 'prompt)
     ;; Add transparency to whole screen
     (set-global-alpha! context .2)
