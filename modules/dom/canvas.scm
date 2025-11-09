@@ -39,7 +39,11 @@
             set-stroke-style!
             line!
             move-to!
-            begin-path!))
+            begin-path!
+            set-global-alpha!
+            set-filter!
+            save!
+            restore!))
 
 ;; HTMLCanvasElement
 (define-foreign get-context
@@ -103,4 +107,16 @@
   (ref extern) f64 f64 -> none)
 (define-foreign stroke!
   "canvas" "stroke"
+  (ref extern) -> none)
+(define-foreign set-global-alpha!
+  "canvas" "globalAlpha"
+  (ref extern) f64 -> none)
+(define-foreign set-filter!
+  "canvas" "setFilter"
+  (ref extern) (ref string) -> none)
+(define-foreign save!
+  "canvas" "save"
+  (ref extern) -> none)
+(define-foreign restore!
+  "canvas" "restore"
   (ref extern) -> none)

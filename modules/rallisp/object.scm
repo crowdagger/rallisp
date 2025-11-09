@@ -85,13 +85,18 @@
          [y-v (- (vec2-y viewport))]
          [x (object-x o)]
          [y (object-y o)])
-      (set-transform! context 1.0 0 0 1.0 (+ x r x-v) (+ y r y-v))
-      (rotate! context rot)
-      
-      (draw-image context (object-image o)
-                  0.0 0.0 d d 
-                  (- r) (- r) d d)
-      (set-transform! context 1 0 0 1 0 0)))
+    (save! context)
+    (set-filter! context "drop-shadow(-5px 4px 3px #222222")
+
+    (set-transform! context 1.0 0 0 1.0 (+ x r x-v) (+ y r y-v))
+    (rotate! context rot)
+    
+    (draw-image context (object-image o)
+                0.0 0.0 d d 
+                (- r) (- r) d d)
+    (set-transform! context 1 0 0 1 0 0)
+    (set-filter! context "")
+    (restore! context)))
 
 (define (object-update! o dt)
   "Update object physically"

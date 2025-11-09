@@ -38,6 +38,8 @@
             car-kmh
             car-turning-radius))
 
+(define min-speed .1)
+
 (define-record-type <car>
   (%make-car object acceleration steer max-acceleration max-brake max-steer wheel-base)
   car?
@@ -114,5 +116,6 @@
     (debug (format #f "new-pos-front: ~a, ~a\n" (vec2-x new-pos-front) (vec2-y new-pos-front)))
     (debug (format #f "new-pos-rear: ~a, ~a\n" (vec2-x new-pos-rear) (vec2-y new-pos-rear)))
     (debug (format #f "new-v: ~a, ~a\n" (vec2-x new-v) (vec2-y new-v)))
-    (set-object-rotation! o (vec2->angle new-heading))
+    (unless (< new-magnitude min-speed)
+      (set-object-rotation! o (vec2->angle new-heading)))
     (set-object-speed! o new-v)))

@@ -68,6 +68,7 @@ window.addEventListener("load", async () => {
             setStrokeStyle: (ctx, style) => ctx.strokeStyle = style,
             beginPath: (ctx) => ctx.beginPath(),
             moveTo: (ctx, x, y) => ctx.moveTo(x, y),
+            globalAlpha: (ctx, alpha) => ctx.globalAlpha = alpha,
             line: (ctx, x, y) => ctx.lineTo(x, y),
             stroke: (ctx) => ctx.stroke(),
             setFont: (ctx, font) => ctx.font = font,
@@ -92,6 +93,7 @@ window.addEventListener("load", async () => {
             drawImage: (ctx, image, sx, sy, sw, sh, dx, dy, dw, dh) => ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh),
             setScale: (ctx, sx, sy) => ctx.scale(sx, sy),
             setTransform: (ctx, a, b, c, d, e, f) => ctx.setTransform(a, b, c, d, e, f),
+            setFilter: (ctx, filter) => ctx.filter = filter,
             setImageSmoothingEnabled: (ctx, enabled) => ctx.imageSmoothingEnabled = (enabled == 1)
         },
         math: {
