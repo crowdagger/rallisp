@@ -66,6 +66,7 @@
   (set! *in:click?* #f))
 
 (define *game* (make-game))
+(define time 0)
 
 
 (define obj (make-object (vec2 0 0) 16.0 (vec2 0 0.0) 0 (make-image "assets/images/car.png")))
@@ -101,6 +102,7 @@
   (match (game-state *game*)
     ('running
      (set! *current-turn* (+ dt *current-turn*))
+     (set! time (+ dt time))
      (game-update! *game* (* .001 dt))
 ;     (log (format #f "collision?: ~a\n" (length (game-collisions *game*))))
 ;     (set-object-rotation! obj (+ (object-rotation obj) 0.01))
@@ -140,7 +142,18 @@
     (set-global-alpha! context .7)
     (set-fill-color! context "#000000")
     (fill-rect context 0 0 game-width game-height)
-    (set-global-alpha! context 1))
+    (set-global-alpha! context 1)
+
+    ;; Print time
+    (set-fill-color! context "#ffffff")
+    (set-font! context "bold 36px monospace")
+    (set-text-align! context "center")
+    (fill-text context "CONGRATULATIONS" 300 100)
+    (set-font! context "bold 24px monospace")
+    (set-text-align! context "center")
+    (let* ([ms (inexact->exact (round time))]
+          [s (exact->inexact (/ ms 1000))])
+      (fill-text context (format #f "Time: ~a s" s) 300 250)))
   
   (when (eq? (game-state *game*) 'prompt)
     ;; Add transparency to whole screen
