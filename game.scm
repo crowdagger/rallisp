@@ -152,8 +152,15 @@
     (set-font! context "bold 24px monospace")
     (set-text-align! context "center")
     (let* ([ms (inexact->exact (round time))]
-          [s (exact->inexact (/ ms 1000))])
-      (fill-text context (format #f "Time: ~a s" s) 300 250)))
+          [s (exact->inexact (/ ms 1000))]
+          [rank (cond
+                 [(< ms 20000) "S"]
+                 [(< ms 22500) "A"]
+                 [(< ms 27000) "B"]
+                 [(< ms 35000) "C"]
+                 [#t "D"])])
+      (fill-text context (format #f "Time: ~a s" s) 300 250)
+      (fill-text context (format #f "Rank: ~a" rank) 300 350)))
   
   (when (eq? (game-state *game*) 'prompt)
     ;; Add transparency to whole screen
