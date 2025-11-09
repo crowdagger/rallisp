@@ -157,10 +157,11 @@
   
   (when (eq? (game-state *game*) 'prompt)
     ;; Add transparency to whole screen
-    (set-global-alpha! context .2)
-    (set-fill-color! context "#FF0000")
-    (fill-rect context 0 0 game-width game-height)
-    (set-global-alpha! context 1)
+    ;; (set-global-alpha! context .2)
+    ;; (set-fill-color! context "#FF0000")
+    ;; (fill-rect context 0 0 game-width game-height)
+    ;; (set-global-alpha! context 1)
+    
     ;; Display input-square
     (set-fill-color! context "#000000")
     (fill-rect context controller-left controller-top controller-width controller-height)
