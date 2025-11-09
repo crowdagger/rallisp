@@ -73,10 +73,12 @@
 (register-car! *game* player)
 
 (define track (game-track *game*))
-(define segment (make-segment surf:asphalt (vec2 0 100) (vec2 320 150) 30))
+(define segment (make-segment surf:asphalt 30))
+(add-segment-point! segment (vec2 0 100))
+(add-segment-point! segment (vec2 320 150))
+(add-segment-point! segment (vec2 480 240))
+(add-segment-point! segment (vec2 640 480))
 (add-track-segment! track segment)
-(add-track-segment! track (make-segment surf:asphalt (vec2 320 150) (vec2 480 240) 30))
-(add-track-segment! track (make-segment surf:asphalt (vec2 480 240) (vec2 640 480) 30))
 
 (let lp ([n 0])
   (when (> n 0)
@@ -184,10 +186,12 @@
   (let* ([offset-x (bounding-client-x canvas)]
          [offset-y (bounding-client-y canvas)]
          [x (- (mouse-x event) offset-x)]
-         [y (- (mouse-y event) offset-y)])
+         [y (- (mouse-y event) offset-y)]
+         [rel-x (+ x (vec2-x (game-viewport *game*)))]
+         [rel-y (+ y (vec2-y (game-viewport *game*)))])
     (debug (format #f "x: ~a, y: ~a, s: ~a\n"
-                   x y
-                   (surface-name (track-surface track (vec2 x y)))))
+                   rel-x rel-y
+                   (surface-name (track-surface track (vec2 rel-x rel-y)))))
     (set! *in:mouse-x* x)
     (set! *in:mouse-y* y)))
   

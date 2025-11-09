@@ -38,7 +38,7 @@
 
 (define (add-track-segment! track segment)
   (let ([segments (track-segments track)])
-    (set-track-segments! track (cons segment segments))))
+    (set-track-segments! track (append segments (list segment)))))
 
 (define (track-draw track context viewport)
   (let lp ([segments (track-segments track)])

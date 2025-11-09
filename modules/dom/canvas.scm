@@ -33,7 +33,13 @@
             set-transform!
             set-image-smoothing-enabled!
             draw-line
-            draw-circle))
+            draw-circle
+            set-line-width!
+            stroke!
+            set-stroke-style!
+            line!
+            move-to!
+            begin-path!))
 
 ;; HTMLCanvasElement
 (define-foreign get-context
@@ -80,18 +86,21 @@
 (define-foreign draw-circle
   "canvas" "drawCircle"
   (ref extern) (ref string) f64 f64 f64 -> none)
-(define-foreign set-stroke-style
+(define-foreign set-line-width!
+  "canvas" "setLineWidth"
+  (ref extern) f64 -> none)
+(define-foreign set-stroke-style!
   "canvas" "setStrokeStyle"
   (ref extern) (ref string) -> none)
-(define-foreign begin-path
+(define-foreign begin-path!
   "canvas" "beginPath"
   (ref extern) -> none)
-(define-foreign move-to
+(define-foreign move-to!
   "canvas" "moveTo"
   (ref extern) f64 f64 -> none)
-(define-foreign line
+(define-foreign line!
   "canvas" "line"
   (ref extern) f64 f64 -> none)
-(define-foreign stroke
+(define-foreign stroke!
   "canvas" "stroke"
   (ref extern) -> none)
