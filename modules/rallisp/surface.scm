@@ -26,7 +26,8 @@
             surface-grip
             surf:asphalt
             surf:grass
-            surf:sand))
+            surf:sand
+            surf:compact-sand))
 
 (define-record-type <surface>
   (make-surface name apparence rolling-resistance grip)
@@ -44,3 +45,6 @@
 
 (define surf:sand
   (make-surface "sand" "#f3ff0a" .3 .3))
+
+(define surf:compact-sand
+  (make-surface "compact-sand" "#994d0b" .1 .8))
