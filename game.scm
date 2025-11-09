@@ -166,7 +166,7 @@
     (set-fill-color! context "#ffffff")
     (set-font! context "bold 12px monospace")
     (set-text-align! context "left")
-    (fill-text context (format #f "~a km/h" (inexact->exact (round (vec2-magnitude (object-speed obj))))) 20 450)
+    (fill-text context (format #f "~a km/h" (car-kmh player)) 20 460)
     (reinit-inputs!)
     (request-animation-frame draw-callback))
 (define draw-callback (procedure->external draw))

@@ -35,7 +35,8 @@
             car-max-brake
             car-max-steer
             car-wheel-base
-            process-car-input))
+            car-kmh
+            car-turning-radius))
 
 (define-record-type <car>
   (%make-car object acceleration steer max-acceleration max-brake max-steer wheel-base)
@@ -49,15 +50,29 @@
   (max-steer car-max-steer))
 
 (define* (make-car object #:optional
-                   (max-acceleration 30)
-                   (max-brake 50)
-                   (max-steer .7)
+                   (max-acceleration 70)
+                   (max-brake 100)
+                   (max-steer .3)
                    (wheel-base .7))
                               
   (%make-car object .0 .0 max-acceleration max-brake max-steer wheel-base))
 
+(define (car-kmh c)
+  "Return a vaguely remotely plausible speed in km/h"
+  (let ([spd (vec2-magnitude (object-speed (car-object c)))]
+        [pixel-per-meter 15])
+    (inexact->exact (round (* (/ 3.6 15)
+                              spd)))))
+
 (define (car-rotation c)
   (object-rotation (car-object c)))
+
+(define (car-turning-radius c)
+  (let ([alpha (/ (car-steer c) 2)]
+        [wb (* (car-wheel-base c) (object-radius (car-object c)))])
+    (if (zero? alpha)
+        #f
+        (/ wb (tan alpha)))))
 
 (define (car-update! c dt track)
   (let* ([o (car-object c)]
@@ -70,8 +85,8 @@
                  (object-speed o)
                  (- 1.0 (* dt (surface-rr surface))))]
          [heading (vec2-normalize speed)]
-         [rot (object-rotation o)]
          [power (* (car-acceleration c) dt (surface-grip surface))]
+         [new-magnitude (+ power  (vec2-magnitude speed))]
          [accel-rear (vec2-mul-scalar (vec2-normalize speed)
                                       power)]
          [accel-front accel-rear]
@@ -79,31 +94,21 @@
                              (vec2-mul-scalar heading wb))]
          [pos-front (vec2-add (vec2 pos-x pos-y)
                               (vec2-mul-scalar heading wb))]
-         [v-rear (vec2-add speed accel-rear)]
-         [v-front (vec2-add speed accel-front)]
-         [v-front (vec2-rotate v-front
-                               steer)]
-         [v-front (vec2-mul-scalar v-front (cos steer))]
+         [v-rear (vec2-mul-scalar heading
+                                  new-magnitude)]
+         [v-front (vec2-mul-scalar (vec2-rotate v-rear
+                                                steer)
+                                   (cos steer))]
          [new-pos-rear (vec2-add pos-rear
-                             (vec2-mul-scalar v-rear
-                                              dt))]
+                                 (vec2-mul-scalar v-rear
+                                                  dt))]
          [new-pos-front (vec2-add pos-front
-                              (vec2-mul-scalar v-front dt))]
-                             
+                                  (vec2-mul-scalar v-front dt))]
          [new-heading (vec2-normalize
                        (vec2-sub new-pos-front
                                  new-pos-rear))]
          [new-v (vec2-mul-scalar new-heading
-                                 (+ (vec2-magnitude speed)
-                                    power))])
-                 
-         ;; [new-v (vec2-mul-scalar (vec2-sub (vec2-add new-pos-front new-pos-rear)
-         ;;                                   (vec2-add pos-front pos-rear))
-         ;;                         (/ .5 dt))])
-    
-    (debug (format #f "steer: ~a\n" steer))
-    (debug (format #f "v-front: ~a, ~a\n" (vec2-x v-front) (vec2-y v-front)))
-    (debug (format #f "v-rear: ~a, ~a\n" (vec2-x v-rear) (vec2-y v-rear)))
+                                 new-magnitude)])
     (debug (format #f "pos-front: ~a, ~a\n" (vec2-x pos-front) (vec2-y pos-front)))
     (debug (format #f "pos-rear: ~a, ~a\n" (vec2-x pos-rear) (vec2-y pos-rear)))
     (debug (format #f "new-pos-front: ~a, ~a\n" (vec2-x new-pos-front) (vec2-y new-pos-front)))
