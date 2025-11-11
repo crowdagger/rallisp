@@ -52,9 +52,9 @@
   (max-steer car-max-steer))
 
 (define* (make-car object #:optional
-                   (max-acceleration 70)
+                   (max-acceleration 100)
                    (max-brake 100)
-                   (max-steer .3)
+                   (max-steer .03)
                    (wheel-base .7))
                               
   (%make-car object .0 .0 max-acceleration max-brake max-steer wheel-base))
@@ -88,29 +88,35 @@
          [speed (vec2-mul-scalar
                  (object-speed o)
                  (- 1.0 (* dt (surface-rr surface))))]
-         [heading (if (zero? (vec2-magnitude speed))
-                      (vec2-rotate (vec2 1 0)
-                                   (car-rotation c))
-                      (vec2-normalize speed))]
+         [heading (vec2-rotate (vec2 1 0)
+                               (car-rotation c))]
          [power (* (car-acceleration c) dt (surface-grip surface))]
          [new-magnitude (+ power  (vec2-magnitude speed))]
-         [accel-rear (vec2-mul-scalar (vec2-normalize speed)
+         [accel-rear (vec2-mul-scalar heading
                                       power)]
          [accel-front accel-rear]
          [pos-rear (vec2-sub (vec2 pos-x pos-y)
                              (vec2-mul-scalar heading wb))]
          [pos-front (vec2-add (vec2 pos-x pos-y)
                               (vec2-mul-scalar heading wb))]
-         [v-rear (vec2-mul-scalar heading
-                                  new-magnitude)]
-         [v-front (vec2-mul-scalar (vec2-rotate v-rear
-                                                steer)
-                                   (cos steer))]
+         [v-rear (vec2-add
+                  accel-rear
+                  (vec2-add speed
+                            (vec2-mul-scalar
+                             (vec2-rotate heading
+                                          (* .5 pi))
+                             (* (surface-grip surface)
+                                spd-scalar
+                                (clamp (sin (- (car-rotation c)
+                                               (vec2->angle speed)))
+                                       -.02
+                                       .02)))))]
+         [v-front (vec2-rotate v-rear
+                               steer)]
          [new-pos-rear (vec2-add pos-rear
-                                 (vec2-mul-scalar v-rear
-                                                  dt))]
+                                 v-rear)]
          [new-pos-front (vec2-add pos-front
-                                  (vec2-mul-scalar v-front dt))]
+                                  v-front)]
          [new-heading (if (and (= (vec2-x new-pos-front)
                                   (vec2-x new-pos-rear))
                                (= (vec2-y new-pos-front)
@@ -119,8 +125,10 @@
                           (vec2-normalize
                            (vec2-sub new-pos-front
                                      new-pos-rear)))]
-         [new-v (vec2-mul-scalar new-heading
-                                 new-magnitude)])
+         [new-v (vec2-mul-scalar (vec2-add
+                                  (vec2-sub new-pos-front pos-front)
+                                  (vec2-sub new-pos-rear pos-rear))
+                                (/ .5 1))])
     (debug (format #f "pos-front: ~a, ~a\n" (vec2-x pos-front) (vec2-y pos-front)))
     (debug (format #f "pos-rear: ~a, ~a\n" (vec2-x pos-rear) (vec2-y pos-rear)))
     (debug (format #f "new-pos-front: ~a, ~a\n" (vec2-x new-pos-front) (vec2-y new-pos-front)))
