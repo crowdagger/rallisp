@@ -81,7 +81,7 @@
          [wb (* (car-wheel-base c) (object-radius o))]
          [spd-scalar (vec2-magnitude (object-speed o))]
          [steer (/ (car-steer c)
-                   (+ 1 (/ spd-scalar 100)))]
+                   (+ 1 (/ spd-scalar 30)))]
          [pos-x (object-center-x o)]
          [pos-y (object-center-y o)]
          [surface (track-surface track (vec2 pos-x pos-y))]
